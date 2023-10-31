@@ -27,12 +27,7 @@ const HeaderComponent = (props:Props) => {
                     <Button icon={<IoCreateOutline />} className='bg-[#1677ff]' type='primary'> Create </Button>
                 </div>
                 <div>
-                    {/* {
-                        isDarkMode ? (<MdDarkMode onClick={toggleTheme} className='cursor-pointer' />) :
-                            (<MdOutlineDarkMode onClick={toggleTheme} className='cursor-pointer' />)
-                    } */}
                     <SwitchThemeComponent theme={theme} toggleTheme={toggleTheme} />
-
                 </div>
             </Header >
         </>
