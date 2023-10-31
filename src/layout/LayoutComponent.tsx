@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import { Layout, Typography } from 'antd'
+import { Layout } from 'antd'
 import HeaderComponent from './HeaderComponent'
 import FooterComponent from './FooterComponent'
 import SideBarComponent from './SideBarComponent'
 import ListComponent from '../components/ListComponent'
 import {
-    DndContext, closestCenter,
+    DndContext,
     KeyboardSensor,
     PointerSensor,
     useSensor,
@@ -19,8 +19,10 @@ import {
 
 } from '@dnd-kit/core'
 import CardComponent from '../components/CardComponent'
-import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, arraySwap, arrayMove } from '@dnd-kit/sortable'
-
+import {  sortableKeyboardCoordinates, arrayMove } from '@dnd-kit/sortable'
+import useLayoutStore from './layout-store'
+import { toggleSideBar,toggleTheme } from './layout-action'
+import { ConfigProvider, theme } from 'antd'
 
 type CardType = {
     id?: string,
@@ -29,8 +31,9 @@ type CardType = {
 
 const LayoutComponent = () => {
     const { Content } = Layout
-    const { Text } = Typography
+    const layoutState = useLayoutStore()
 
+    const { isSideBarOpen, themeColor, dispatch } = layoutState
     const sensors = useSensors(
         useSensor(PointerSensor),
         useSensor(KeyboardSensor, {
@@ -82,7 +85,7 @@ const LayoutComponent = () => {
         ) {
             return;
         }
-        let newIndexId: any = overContainer || activeContainer
+        const newIndexId: any = overContainer || activeContainer
 
         const oldIndex = active.data.current?.sortable.index
         const newIndex = over?.data.current?.sortable.index
@@ -159,8 +162,8 @@ const LayoutComponent = () => {
         const listKey = Object.keys(item)
         let containerId = ""
         listKey.forEach((key) => {
-            let cards = item[key]
-            let find = cards.filter((card: CardType) => card.id == id)
+            const cards = item[key]
+            const find = cards.filter((card: CardType) => card.id == id)
             if (find.length > 0) {
                 containerId = key
                 return containerId
@@ -168,30 +171,43 @@ const LayoutComponent = () => {
         })
         return containerId
     }
+    const { defaultAlgorithm, darkAlgorithm } = theme
+    const appTheme = themeColor === "dark" ? darkAlgorithm : defaultAlgorithm
 
+    const toggleSideBarHandler = ()=>{
+        dispatch(toggleSideBar(isSideBarOpen))
+    }
+    const toggleThemeHandler =()=>{
+        dispatch(toggleTheme(themeColor))
+    }
     return (
         <>
-            <Layout>
-                <HeaderComponent />
-                <SideBarComponent />
-                <Content className='flex-col  h-screen'>
-                    <div className='p-10 flex gap-9'>
-                        <DndContext
-                            onDragEnd={handleDragEnd}
-                            onDragStart={handleDragStart}
-                            sensors={sensors}
-                            collisionDetection={closestCorners}
-                            onDragOver={handleDragOver}>
-                            <ListComponent title='TO DO' listId='todo' items={item.todo} />
-                            <ListComponent title='On Going' listId='ongoing' items={item.ongoing} />
-                            <ListComponent title='Checking' listId='checking' items={item.checking} />
-                            <ListComponent title='Done' listId='done' items={item.done} />
-                            <DragOverlay>{activeCard?.id ? <CardComponent id={activeCard.id} title={activeCard.title} /> : null}</DragOverlay>
-                        </DndContext>
-                    </div>
-                </Content>
-                <FooterComponent />
-            </Layout>
+            <ConfigProvider
+                theme={{
+                    algorithm: appTheme
+                }}>
+                <Layout>
+                    <HeaderComponent toggleSideBar={toggleSideBarHandler} toggleTheme={toggleThemeHandler} theme={themeColor}/>
+                    <SideBarComponent isOpen={isSideBarOpen} toggleSideBar={toggleSideBarHandler} />
+                    <Content className='flex-col  h-screen'>
+                        <div className='p-10 flex gap-9'>
+                            <DndContext
+                                onDragEnd={handleDragEnd}
+                                onDragStart={handleDragStart}
+                                sensors={sensors}
+                                collisionDetection={closestCorners}
+                                onDragOver={handleDragOver}>
+                                <ListComponent title='TO DO' listId='todo' items={item.todo} />
+                                <ListComponent title='On Going' listId='ongoing' items={item.ongoing} />
+                                <ListComponent title='Checking' listId='checking' items={item.checking} />
+                                <ListComponent title='Done' listId='done' items={item.done} />
+                                <DragOverlay>{activeCard?.id ? <CardComponent id={activeCard.id} title={activeCard.title} /> : null}</DragOverlay>
+                            </DndContext>
+                        </div>
+                    </Content>
+                    <FooterComponent />
+                </Layout>
+            </ConfigProvider>
         </>
     )
 }

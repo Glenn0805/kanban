@@ -1,17 +1,17 @@
-import React from 'react'
 import { Layout, Button } from 'antd'
 import { BsKanban } from 'react-icons/bs'
 import { IoCreateOutline } from 'react-icons/io5'
 import SwitchThemeComponent from '../components/SwitchThemeComponent'
-import useLayoutStore from '../store/useLayoutStore'
 
-const HeaderComponent = () => {
+type Props = {
+    toggleSideBar:()=>void,
+    toggleTheme:()=>void,
+    theme: string
+}
+
+const HeaderComponent = (props:Props) => {
     const { Header } = Layout
-    const themeState = useLayoutStore()
-    const theme = themeState.themeColor
-    const toggleTheme = themeState.toggleTheme
-    const toggleSideBar = themeState.toggleSideBar
-
+    const {toggleSideBar,toggleTheme,theme} = props
 
     return (
         <>
