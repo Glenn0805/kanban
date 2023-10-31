@@ -1,5 +1,5 @@
-import {ILayoutState } from './interface/LayoutStoreInterface';
-import {Action} from '../shared/interface/IReducer';
+import { Action } from '../shared/interface/IReducer';
+import { ILayoutState } from './interface/LayoutStoreInterface';
 export const initialLayoutState:ILayoutState={
     isSideBarOpen:false,
     themeColor: localStorage.getItem("theme") || "light"

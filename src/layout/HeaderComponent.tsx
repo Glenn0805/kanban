@@ -1,4 +1,4 @@
-import { Layout, Button } from 'antd'
+import { Button, Layout } from 'antd'
 import { BsKanban } from 'react-icons/bs'
 import { IoCreateOutline } from 'react-icons/io5'
 import SwitchThemeComponent from '../components/SwitchThemeComponent'

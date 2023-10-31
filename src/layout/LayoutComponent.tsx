@@ -1,28 +1,26 @@
-import { useState } from 'react'
-import { Layout } from 'antd'
-import HeaderComponent from './HeaderComponent'
-import FooterComponent from './FooterComponent'
-import SideBarComponent from './SideBarComponent'
-import ListComponent from '../components/ListComponent'
 import {
     DndContext,
+    DragEndEvent,
+    DragOverEvent,
+    DragOverlay,
+    DragStartEvent,
     KeyboardSensor,
     PointerSensor,
-    useSensor,
-    useSensors,
+    UniqueIdentifier,
     closestCorners,
-    DragStartEvent,
-    DragOverEvent,
-    DragEndEvent,
-    DragOverlay,
-    UniqueIdentifier
-
+    useSensor,
+    useSensors
 } from '@dnd-kit/core'
+import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable'
+import { ConfigProvider, Layout, theme } from 'antd'
+import { useState } from 'react'
 import CardComponent from '../components/CardComponent'
-import {  sortableKeyboardCoordinates, arrayMove } from '@dnd-kit/sortable'
+import ListComponent from '../components/ListComponent'
+import FooterComponent from './FooterComponent'
+import HeaderComponent from './HeaderComponent'
+import SideBarComponent from './SideBarComponent'
+import { toggleSideBar, toggleTheme } from './layout-action'
 import useLayoutStore from './layout-store'
-import { toggleSideBar,toggleTheme } from './layout-action'
-import { ConfigProvider, theme } from 'antd'
 
 type CardType = {
     id?: string,
