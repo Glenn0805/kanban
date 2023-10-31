@@ -1,8 +1,7 @@
-import React, { useState } from 'react'
-import { Card, Badge } from 'antd'
+import { Card } from 'antd'
 import CardComponent from './CardComponent'
 import { useDroppable } from '@dnd-kit/core'
-import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, arraySwap, arrayMove } from '@dnd-kit/sortable'
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 
 type Props = {
     color?: string,
@@ -16,7 +15,6 @@ const ListComponent = (props: Props) => {
     const { setNodeRef } = useDroppable({
         id: listId
     })
-
     return (
         <>
             <SortableContext items={items || []} id={listId} strategy={verticalListSortingStrategy}>

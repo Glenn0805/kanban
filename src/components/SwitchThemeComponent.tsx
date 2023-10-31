@@ -9,7 +9,6 @@ type Props = {
 
 const SwitchThemeComponent = (props: Props) => {
     const { toggleTheme, theme } = props
-
     return (
         <>
             <Switch
