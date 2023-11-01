@@ -1,7 +1,7 @@
 import { Button, Layout } from 'antd'
 import { BsKanban } from 'react-icons/bs'
 import { IoCreateOutline } from 'react-icons/io5'
-import SwitchThemeComponent from '../components/SwitchThemeComponent'
+import SwitchThemeComponent from './SwitchThemeComponent'
 
 type Props = {
     toggleSideBar:()=>void,
@@ -24,7 +24,7 @@ const HeaderComponent = (props:Props) => {
                             Kanban
                         </span>
                     </div>
-                    <Button icon={<IoCreateOutline />} className='bg-[#1677ff]' type='primary'> Create </Button>
+                    <Button icon={<IoCreateOutline />} className='bg-[#1677ff]' type='primary'> Create  Board</Button>
                 </div>
                 <div>
                     <SwitchThemeComponent theme={theme} toggleTheme={toggleTheme} />

@@ -1,13 +1,13 @@
 import { Card } from 'antd'
 import CardComponent from './CardComponent'
-import { useDroppable } from '@dnd-kit/core'
+import { UniqueIdentifier, useDroppable } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 
 type Props = {
     color?: string,
     title: string,
-    listId: string,
-    items?: { id: number, title: string }[]
+    listId: UniqueIdentifier,
+    items?: { id: UniqueIdentifier, cardName: string }[]
 }
 
 const ListComponent = (props: Props) => {
@@ -37,7 +37,7 @@ const ListComponent = (props: Props) => {
                     }
                 >
                     {
-                        items?.map((card) => <CardComponent color="red " id={card.id} key={card.id} title={card.title} />)
+                        items?.map((card) => <CardComponent color="red " id={card.id} key={card.id} title={card.cardName} />)
                     }
 
 

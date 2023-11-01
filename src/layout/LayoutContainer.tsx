@@ -14,20 +14,20 @@ import {
 import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable'
 import { ConfigProvider, Layout, theme } from 'antd'
 import { useState } from 'react'
-import CardComponent from '../components/CardComponent'
-import ListComponent from '../components/ListComponent'
-import FooterComponent from './FooterComponent'
-import HeaderComponent from './HeaderComponent'
-import SideBarComponent from './SideBarComponent'
+import CardComponent from '../board/components/CardComponent'
+import ListComponent from '../board/components/ListComponent'
+import FooterComponent from './component/FooterComponent'
+import HeaderComponent from './component/HeaderComponent'
+import SideBarComponent from './component/SideBarComponent'
 import { toggleSideBar, toggleTheme } from './layout-action'
 import useLayoutStore from './layout-store'
 
 type CardType = {
     id?: string,
-    title?: string
+    cardName?: string
 }
 
-const LayoutComponent = () => {
+const LayoutContainer = () => {
     const { Content } = Layout
     const layoutState = useLayoutStore()
 
@@ -43,21 +43,21 @@ const LayoutComponent = () => {
         'todo': [
             {
                 id: 1,
-                title: "Card 1",
+                cardName: "Card 1",
             },
             {
                 id: 2,
-                title: "Card 2",
+                cardName: "Card 2",
             }, {
                 id: 3,
-                title: "Card 3",
+                cardName: "Card 3",
             }
             , {
                 id: 4,
-                title: "Card 4",
+                cardName: "Card 4",
             }, {
                 id: 5,
-                title: "Card 5",
+                cardName: "Card 5",
             }
         ],
         'ongoing': [],
@@ -210,4 +210,4 @@ const LayoutComponent = () => {
     )
 }
 
-export default LayoutComponent
+export default LayoutContainer

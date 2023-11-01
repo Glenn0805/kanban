@@ -1,10 +1,10 @@
-import LayoutComponent from "./layout/LayoutComponent"
+import LayoutContainer from "./layout/LayoutContainer"
 
 function AppComponent() {
 
   return (
     <>
-      <LayoutComponent />
+      <LayoutContainer />
     </>
   )
 }

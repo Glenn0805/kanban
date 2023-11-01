@@ -1,5 +1,5 @@
 import { Drawer } from 'antd'
-import BoardComponent from '../components/BoardComponent'
+import BoardComponent from '../../board/components/BoardComponent'
 
 type Props ={
     isOpen:boolean,
