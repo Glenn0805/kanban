@@ -1,8 +1,8 @@
 import { ILayoutState } from './interface/LayoutStoreInterface';
 import { create } from 'zustand';
 import { layoutReducer, initialLayoutState } from './layout-reducer';
-import { Action, DipatchAction } from '../shared/interface/IReducer';
-import useShallowHook from '../shared/hooks/useShallowHook';
+import { Action, DipatchAction } from 'Shared/interface/IReducer';
+import useShallowHook from 'Shared/hooks/useShallowHook';
 
 const layoutStore = create<ILayoutState & DipatchAction>((set) => ({
     ...initialLayoutState,

@@ -1,4 +1,4 @@
-import { Action } from '../shared/interface/IReducer';
+import { Action } from 'Shared/interface/IReducer';
 import { ILayoutState } from './interface/LayoutStoreInterface';
 export const initialLayoutState:ILayoutState={
     isSideBarOpen:false,
