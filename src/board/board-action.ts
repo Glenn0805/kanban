@@ -1,4 +1,4 @@
-import { Board, Card, List } from 'Shared/type/KanbanType';
+import { Board, CardType, List } from 'Shared/type/KanbanType';
 import { DragEndEvent, DragOverEvent, DragStartEvent, UniqueIdentifier } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 
@@ -71,7 +71,7 @@ export const handleDragStart = (event: DragStartEvent, lists: List[]) => {
     const { data, id } = active;
     const current = data.current
     const currentList: List = lists.filter(list => list.listId === current?.sortable.containerId)[0]
-    const cards: Card[] = currentList.cards
+    const cards: CardType[] = currentList.cards
     const activeCard = cards.filter((item) => item.id == id)[0]
     return {
         payload: {
@@ -118,7 +118,7 @@ export const handleDragOver = (event: DragOverEvent, lists: List[], boardId: str
     const newList: List[] = []
 
     lists.forEach((list) => {
-        let newCards: Card[] = []
+        let newCards: CardType[] = []
         if (list.listId !== activeContainer && list.listId !== overContainer) {
             newList.push(list)
         }
