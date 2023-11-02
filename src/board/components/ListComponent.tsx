@@ -1,28 +1,20 @@
-import React, { useState } from 'react'
-import { Card, Badge } from 'antd'
+import { Card } from 'antd'
 import CardComponent from './CardComponent'
 import { useDroppable } from '@dnd-kit/core'
-import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, arraySwap, arrayMove } from '@dnd-kit/sortable'
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import { List } from 'Shared/type/KanbanType'
 
-type Props = {
-    color?: string,
-    title: string,
-    listId: string,
-    items?: { id: number, title: string }[]
-}
-
-const ListComponent = (props: Props) => {
-    const { color = "#1677ff", title, listId, items } = props
+const ListComponent = (props: List) => {
+    const { color = "#1677ff", listName, listId, cards } = props
     const { setNodeRef } = useDroppable({
         id: listId
     })
-
     return (
         <>
-            <SortableContext items={items || []} id={listId} strategy={verticalListSortingStrategy}>
+            <SortableContext items={cards || []} id={listId} strategy={verticalListSortingStrategy}>
                 <Card
                     ref={setNodeRef}
-                    title={title}
+                    title={listName}
                     className='w-72 border min-h-[200px] max-h-[700px] border-t-8 p-0'
                     style={{ borderTopColor: color }}
                     headStyle={{ minHeight: "20px", padding: "8px" }}
@@ -39,7 +31,7 @@ const ListComponent = (props: Props) => {
                     }
                 >
                     {
-                        items?.map((card) => <CardComponent color="red " id={card.id} key={card.id} title={card.title} />)
+                        cards?.map((card) => <CardComponent color="red " id={card.id} key={card.id} title={card.cardName} />)
                     }
 
 

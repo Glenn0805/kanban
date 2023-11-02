@@ -1,69 +1,46 @@
-import { useState } from 'react'
-import { Layout, Typography } from 'antd'
-import HeaderComponent from './HeaderComponent'
-import FooterComponent from './FooterComponent'
-import SideBarComponent from './SideBarComponent'
-import ListComponent from '../components/ListComponent'
 import {
-    DndContext, closestCenter,
+    DndContext,
+    DragEndEvent,
+    DragOverEvent,
+    DragOverlay,
+    DragStartEvent,
     KeyboardSensor,
     PointerSensor,
-    useSensor,
-    useSensors,
+    UniqueIdentifier,
     closestCorners,
-    DragStartEvent,
-    DragOverEvent,
-    DragEndEvent,
-    DragOverlay,
-    UniqueIdentifier
-
+    useSensor,
+    useSensors
 } from '@dnd-kit/core'
-import CardComponent from '../components/CardComponent'
-import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, arraySwap, arrayMove } from '@dnd-kit/sortable'
-
+import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable'
+import { ConfigProvider, Layout, theme } from 'antd'
+import { useState } from 'react'
+import CardComponent from '../board/components/CardComponent'
+import ListComponent from '../board/components/ListComponent'
+import FooterComponent from './component/FooterComponent'
+import HeaderComponent from './component/HeaderComponent'
+import SideBarComponent from './component/SideBarComponent'
+import { toggleSideBar, toggleTheme } from './layout-action'
+import useLayoutStore from './layout-store'
+import BoardContainer from '../board/BoardContainer'
+import useBoardStore from 'src/board/board-store'
 
 type CardType = {
-    id?: string,
-    title?: string
+    id: UniqueIdentifier,
+    cardName: string
 }
 
-const LayoutComponent = () => {
+const LayoutContainer = () => {
     const { Content } = Layout
-    const { Text } = Typography
+    const layoutState = useLayoutStore()
 
+    const { isSideBarOpen, themeColor, dispatch } = layoutState
     const sensors = useSensors(
         useSensor(PointerSensor),
         useSensor(KeyboardSensor, {
             coordinateGetter: sortableKeyboardCoordinates,
         })
     );
-
-    const [item, setItem] = useState<any>({
-        'todo': [
-            {
-                id: 1,
-                title: "Card 1",
-            },
-            {
-                id: 2,
-                title: "Card 2",
-            }, {
-                id: 3,
-                title: "Card 3",
-            }
-            , {
-                id: 4,
-                title: "Card 4",
-            }, {
-                id: 5,
-                title: "Card 5",
-            }
-        ],
-        'ongoing': [],
-        'checking': [],
-        'done': []
-    }
-    )
+    const [item, setItem] = useState<any[]>([])
 
     const [activeCard, setActiveCard] = useState<CardType>();
 
@@ -82,7 +59,7 @@ const LayoutComponent = () => {
         ) {
             return;
         }
-        let newIndexId: any = overContainer || activeContainer
+        const newIndexId: any = overContainer || activeContainer
 
         const oldIndex = active.data.current?.sortable.index
         const newIndex = over?.data.current?.sortable.index
@@ -159,8 +136,8 @@ const LayoutComponent = () => {
         const listKey = Object.keys(item)
         let containerId = ""
         listKey.forEach((key) => {
-            let cards = item[key]
-            let find = cards.filter((card: CardType) => card.id == id)
+            const cards = item[key]
+            const find = cards.filter((card: CardType) => card.id == id)
             if (find.length > 0) {
                 containerId = key
                 return containerId
@@ -168,32 +145,50 @@ const LayoutComponent = () => {
         })
         return containerId
     }
+    const { defaultAlgorithm, darkAlgorithm } = theme
+    const appTheme = themeColor === "dark" ? darkAlgorithm : defaultAlgorithm
+
+    const toggleSideBarHandler = ()=>{
+        dispatch(toggleSideBar(isSideBarOpen))
+    }
+    const toggleThemeHandler =()=>{
+        dispatch(toggleTheme(themeColor))
+    }
+    
+    const boardStore = useBoardStore()
+    const data = boardStore.data
 
     return (
         <>
-            <Layout>
-                <HeaderComponent />
-                <SideBarComponent />
-                <Content className='flex-col  h-screen'>
-                    <div className='p-10 flex gap-9'>
-                        <DndContext
-                            onDragEnd={handleDragEnd}
-                            onDragStart={handleDragStart}
-                            sensors={sensors}
-                            collisionDetection={closestCorners}
-                            onDragOver={handleDragOver}>
-                            <ListComponent title='TO DO' listId='todo' items={item.todo} />
-                            <ListComponent title='On Going' listId='ongoing' items={item.ongoing} />
-                            <ListComponent title='Checking' listId='checking' items={item.checking} />
-                            <ListComponent title='Done' listId='done' items={item.done} />
-                            <DragOverlay>{activeCard?.id ? <CardComponent id={activeCard.id} title={activeCard.title} /> : null}</DragOverlay>
-                        </DndContext>
-                    </div>
-                </Content>
-                <FooterComponent />
-            </Layout>
+            <ConfigProvider
+                theme={{
+                    algorithm: appTheme
+                }}>
+                <Layout>
+                    <HeaderComponent toggleSideBar={toggleSideBarHandler} toggleTheme={toggleThemeHandler} theme={themeColor}/>
+                    <SideBarComponent isOpen={isSideBarOpen} toggleSideBar={toggleSideBarHandler} />
+                    <Content className='flex-col  h-screen'>
+                        
+                            {/* <DndContext
+                                onDragEnd={handleDragEnd}
+                                onDragStart={handleDragStart}
+                                sensors={sensors}
+                                collisionDetection={closestCorners}
+                                onDragOver={handleDragOver}>
+                                <ListComponent title='TO DO' listId='todo' items={item.todo} />
+                                <ListComponent title='On Going' listId='ongoing' items={item.ongoing} />
+                                <ListComponent title='Checking' listId='checking' items={item.checking} />
+                                <ListComponent title='Done' listId='done' items={item.done} />
+                                <DragOverlay>{activeCard?.id ? <CardComponent id={activeCard.id} title={activeCard.title} /> : null}</DragOverlay>
+                            </DndContext> */}
+                            <BoardContainer boardId={data[0]?.boardId || ""} boardName={data[0]?.boardName || ""} lists={data[0]?.lists || []}/>
+                        
+                    </Content>
+                    <FooterComponent />
+                </Layout>
+            </ConfigProvider>
         </>
     )
 }
 
-export default LayoutComponent
+export default LayoutContainer

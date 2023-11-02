@@ -1,11 +1,12 @@
-import React from 'react'
 import { Drawer } from 'antd'
-import layoutStore from '../store/LayoutStore'
-import BoardComponent from '../components/BoardComponent'
+import BoardComponent from '../../board/components/BoardComponent'
 
-const SideBarComponent = () => {
-    const isOpen = layoutStore((state: any) => state.isSideBarOpen)
-    const toggleSideBar = layoutStore((action: any) => action.toggleSideBar)
+type Props ={
+    isOpen:boolean,
+    toggleSideBar: ()=>void
+}
+const SideBarComponent = (props:Props) => {
+    const {isOpen,toggleSideBar} = props
     return (
         <>
             <Drawer
