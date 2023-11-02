@@ -5,6 +5,7 @@ import useBoardStore from './board-store'
 import { handleDragEnd, handleDragOver, handleDragStart } from './board-action'
 import CardComponent from './components/CardComponent'
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable'
+import ActiveCardComponent from './components/ActiveCardComponent'
 
 
 const BoardContainer = (props: Board) => {
@@ -42,7 +43,7 @@ const BoardContainer = (props: Board) => {
                             dispatch(handleDragEnd(event, lists, boardId, data))
                         }}>
                         {renderLists}
-                        <DragOverlay>{activeCard?.id ? <CardComponent id={activeCard?.id} title={activeCard?.cardName} /> : null}</DragOverlay>
+                        <DragOverlay>{activeCard?.id ? <ActiveCardComponent cardName={activeCard.cardName} id={activeCard.id} /> : null}</DragOverlay>
                     </DndContext>
                 </div>
             </div>
