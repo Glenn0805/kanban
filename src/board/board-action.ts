@@ -152,7 +152,6 @@ export const handleDragOver = (event: DragOverEvent, lists: List[], boardId: str
         boardName: currentBoard.boardName,
         lists: newList
     }
-    console.log(newBoard)
 
     return {
         payload: {
