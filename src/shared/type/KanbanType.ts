@@ -11,7 +11,7 @@ export type List = {
     listId: string,
     listName: string,
     color?:string,
-    cards: CardType[] | []
+    cards: CardType[] | [],
 }
 
 export type Board = {
@@ -20,7 +20,7 @@ export type Board = {
     lists: List[] | []
 }
 
-export type KanbanData ={
-    data : Board[] | [],
-    activeCard:CardType | null
+export type AddEditCardModalType = {
+    isAddEditModalOpen:boolean,
+    actionType?: "add" | "edit" | null
 }

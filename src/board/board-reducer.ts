@@ -1,10 +1,17 @@
 import { Action } from 'Shared/interface/IReducer'
-import { KanbanData } from 'Shared/type/KanbanType'
 import data from '../data.json'
+import { KanbanData } from './type/BoardType'
 
 export const boardInitalState: KanbanData = {
-    data: data||[],
-    activeCard:null
+    data: data || [],
+    activeCard: null,
+    addEditModal: {
+        modal: {
+            isAddEditModalOpen: false,
+            actionType: null,
+        },
+        list:{}
+    }
 }
 
 

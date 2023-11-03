@@ -1,4 +1,4 @@
-import { Board, CardType, List } from 'Shared/type/KanbanType';
+import { AddEditCardModalType, Board, CardType, List } from 'Shared/type/KanbanType';
 import { DragEndEvent, DragOverEvent, DragStartEvent, UniqueIdentifier } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 
@@ -162,3 +162,27 @@ export const handleDragOver = (event: DragOverEvent, lists: List[], boardId: str
         }
     }
 }
+
+export const toggleAddEditModal = (addEditModal: AddEditCardModalType,list:List | NonNullable<unknown>) => {
+    const { isAddEditModalOpen, actionType=null } = addEditModal
+    const obj ={
+        modal: {
+            isAddEditModalOpen: !isAddEditModalOpen,
+            actionType: actionType
+        },
+        list:{}
+    }
+
+    if(actionType === "add"){
+        obj.list = list
+    }
+    return {
+        payload: {
+            addEditModal: {
+                ...obj
+            }
+
+        }
+    }
+}
+

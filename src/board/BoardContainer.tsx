@@ -1,20 +1,24 @@
 import { DndContext, DragOverlay, KeyboardSensor, PointerSensor, closestCorners, useSensor, useSensors } from '@dnd-kit/core'
-import { Board } from 'Shared/type/KanbanType'
+import { Board, List } from 'Shared/type/KanbanType'
 import ListComponent from './components/ListComponent'
 import useBoardStore from './board-store'
-import { handleDragEnd, handleDragOver, handleDragStart } from './board-action'
-import CardComponent from './components/CardComponent'
+import { closeAddEditModal, handleDragEnd, handleDragOver, handleDragStart, toggleAddEditModal } from './board-action'
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable'
 import ActiveCardComponent from './components/ActiveCardComponent'
+import AddEditCardModal from './components/AddEditCardModal'
 
 
 const BoardContainer = (props: Board) => {
     const { boardId, boardName, lists } = props
     const boardStore = useBoardStore()
-    const { dispatch, data, activeCard } = boardStore
+    const { dispatch, data, activeCard ,addEditModal} = boardStore
+
+    const toggleModal = (actionType: "add" | "edit" | null,list:List| NonNullable<unknown>)=>{
+        dispatch(toggleAddEditModal({isAddEditModalOpen:addEditModal.modal.isAddEditModalOpen,actionType},list))
+    }
 
     const renderLists = lists?.map((list, id) => (
-        <ListComponent key={id} listId={list.listId} listName={list.listName} color='green' cards={list.cards} />
+        <ListComponent key={id} list={list} openModal={toggleModal}/>
     ))
 
     const sensors = useSensors(
@@ -23,7 +27,6 @@ const BoardContainer = (props: Board) => {
             coordinateGetter: sortableKeyboardCoordinates,
         })
     );
-
     return (
         <>
             <div className='flex-col'>
@@ -47,6 +50,7 @@ const BoardContainer = (props: Board) => {
                     </DndContext>
                 </div>
             </div>
+            <AddEditCardModal modal={addEditModal.modal} list={addEditModal.list} key={"addEditCardModal"} onClose={toggleModal}/>
 
         </>
     )

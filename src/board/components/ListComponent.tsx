@@ -5,11 +5,18 @@ import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { List } from 'Shared/type/KanbanType'
 import { VscAdd } from 'react-icons/vsc'
 
-const ListComponent = (props: List) => {
-    const { color = "#1677ff", listName, listId, cards } = props
+type Props={
+    list:List,
+    openModal:(actionType:"add" | "edit" | null,list:List)=>void
+}
+
+const ListComponent = (props:Props) => {
+    const {list,openModal } = props
+    const { listName, listId, cards, color = "#1677ff",} =list
     const { setNodeRef } = useDroppable({
         id: listId
     })
+
 
     return (
         <>
@@ -36,7 +43,15 @@ const ListComponent = (props: List) => {
                     }
                     actions={[
                         <div className='px-3'>
-                            <Button type='text' className='flex w-full  justify-center items-center ' icon={<VscAdd className ="text-base"/>}> Add a Card</Button>
+                            <Button
+                                type='text'
+                                className='flex w-full justify-center items-center'
+                                icon={<VscAdd className="text-base" />}
+                                onClick={()=>{
+                                    openModal("add",list)
+                                }}
+                            > Add a Card
+                            </Button>
                         </div>
                     ]}
                 >
@@ -47,6 +62,7 @@ const ListComponent = (props: List) => {
                 </Card>
 
             </SortableContext>
+
         </>
     )
 }
