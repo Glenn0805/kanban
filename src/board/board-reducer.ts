@@ -9,8 +9,14 @@ export const boardInitalState: KanbanData = {
         modal: {
             isAddEditModalOpen: false,
             actionType: null,
+            listName: ""
         },
-        list:{}
+        card:{
+            cardName : "",
+            id : "",
+            hasLabel:false,
+            labelColor:""
+        }
     }
 }
 

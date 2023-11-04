@@ -1,7 +1,7 @@
 import { UniqueIdentifier } from '@dnd-kit/core'
 
 export type CardType = {
-    id: UniqueIdentifier,
+    id: UniqueIdentifier | string,
     cardName: string,
     hasLabel?:boolean,
     labelColor?:string
@@ -22,5 +22,6 @@ export type Board = {
 
 export type AddEditCardModalType = {
     isAddEditModalOpen:boolean,
-    actionType?: "add" | "edit" | null
+    actionType?: "add" | "edit" | null,
+    listName?: string
 }

@@ -163,18 +163,25 @@ export const handleDragOver = (event: DragOverEvent, lists: List[], boardId: str
     }
 }
 
-export const toggleAddEditModal = (addEditModal: AddEditCardModalType,list:List | NonNullable<unknown>) => {
-    const { isAddEditModalOpen, actionType=null } = addEditModal
-    const obj ={
+export const toggleAddEditModal = (addEditModal: AddEditCardModalType,card?:CardType) => {
+    const { isAddEditModalOpen, actionType=null,listName } = addEditModal
+    const obj :{modal:AddEditCardModalType,card:CardType} ={
         modal: {
             isAddEditModalOpen: !isAddEditModalOpen,
-            actionType: actionType
+            actionType: actionType,
+            listName:listName
         },
-        list:{}
+        card:{
+            cardName : "",
+            id : "",
+            hasLabel:false,
+            labelColor:""
+        }
     }
+    
 
-    if(actionType === "add"){
-        obj.list = list
+    if(actionType === "edit" && card){
+        obj.card ={ ...card}
     }
     return {
         payload: {

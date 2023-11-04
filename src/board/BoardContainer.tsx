@@ -1,11 +1,13 @@
-import { DndContext, DragOverlay, KeyboardSensor, PointerSensor, closestCorners, useSensor, useSensors } from '@dnd-kit/core'
-import { Board, List } from 'Shared/type/KanbanType'
+import { DndContext, DragOverlay, KeyboardSensor, closestCorners, useSensor, useSensors } from '@dnd-kit/core'
+import { Board} from 'Shared/type/KanbanType'
 import ListComponent from './components/ListComponent'
 import useBoardStore from './board-store'
-import { closeAddEditModal, handleDragEnd, handleDragOver, handleDragStart, toggleAddEditModal } from './board-action'
+import {handleDragEnd, handleDragOver, handleDragStart, toggleAddEditModal } from './board-action'
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable'
 import ActiveCardComponent from './components/ActiveCardComponent'
 import AddEditCardModal from './components/AddEditCardModal'
+import { MouseSensor,PointerSensor } from './config/CustomSensor'
+import { ToggleAddEditModal } from './type/BoardType'
 
 
 const BoardContainer = (props: Board) => {
@@ -13,15 +15,20 @@ const BoardContainer = (props: Board) => {
     const boardStore = useBoardStore()
     const { dispatch, data, activeCard ,addEditModal} = boardStore
 
-    const toggleModal = (actionType: "add" | "edit" | null,list:List| NonNullable<unknown>)=>{
-        dispatch(toggleAddEditModal({isAddEditModalOpen:addEditModal.modal.isAddEditModalOpen,actionType},list))
+    const toggleModal : ToggleAddEditModal = (actionType,listName,card)=>{
+        dispatch(toggleAddEditModal({
+                isAddEditModalOpen:addEditModal.modal.isAddEditModalOpen,
+                listName:listName,
+                actionType:actionType},
+                card))
     }
 
-    const renderLists = lists?.map((list, id) => (
-        <ListComponent key={id} list={list} openModal={toggleModal}/>
+    const renderLists = lists?.map((list) => (
+        <ListComponent key={list.listId} list={list} openModal={toggleModal}/>
     ))
 
     const sensors = useSensors(
+        useSensor(MouseSensor),
         useSensor(PointerSensor),
         useSensor(KeyboardSensor, {
             coordinateGetter: sortableKeyboardCoordinates,
@@ -50,7 +57,7 @@ const BoardContainer = (props: Board) => {
                     </DndContext>
                 </div>
             </div>
-            <AddEditCardModal modal={addEditModal.modal} list={addEditModal.list} key={"addEditCardModal"} onClose={toggleModal}/>
+            <AddEditCardModal modal={addEditModal.modal} card={addEditModal.card} key={"addEditCardModal"} onClose={toggleModal}/>
 
         </>
     )

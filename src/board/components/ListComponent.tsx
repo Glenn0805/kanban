@@ -4,10 +4,11 @@ import { useDroppable } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { List } from 'Shared/type/KanbanType'
 import { VscAdd } from 'react-icons/vsc'
+import { ToggleAddEditModal } from '../type/BoardType'
 
 type Props={
     list:List,
-    openModal:(actionType:"add" | "edit" | null,list:List)=>void
+    openModal: ToggleAddEditModal
 }
 
 const ListComponent = (props:Props) => {
@@ -48,7 +49,7 @@ const ListComponent = (props:Props) => {
                                 className='flex w-full justify-center items-center'
                                 icon={<VscAdd className="text-base" />}
                                 onClick={()=>{
-                                    openModal("add",list)
+                                    openModal("add",list.listName)
                                 }}
                             > Add a Card
                             </Button>
@@ -56,7 +57,7 @@ const ListComponent = (props:Props) => {
                     ]}
                 >
                     {
-                        cards?.map((card) => <CardComponent labelColor="red " id={card.id} key={card.id} cardName={card.cardName} />)
+                        cards?.map((card) => <CardComponent list={list} key={card.id} card={card} openModal={openModal}/>)
                     }
 
                 </Card>

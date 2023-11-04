@@ -1,35 +1,36 @@
 import { Button, Form, Input, Modal, Select, Space, Tag } from 'antd'
-import { AddEditCardModalType, List } from 'src/shared/type/KanbanType'
-import {FcHighPriority, FcLowPriority, FcMediumPriority} from 'react-icons/fc'
-import {IoMdAdd} from 'react-icons/io'
+import { AddEditCardModalType, CardType } from 'src/shared/type/KanbanType'
+import { FcHighPriority, FcLowPriority, FcMediumPriority } from 'react-icons/fc'
+import { IoMdAdd } from 'react-icons/io'
+import { useEffect } from 'react'
+import { ToggleAddEditModal } from '../type/BoardType'
 type Props = {
-    onClose:(actionType:"add" | "edit" | null,list:List|NonNullable<unknown>)=>void
-    modal:AddEditCardModalType,
-    list: List | null
+    onClose:ToggleAddEditModal
+    modal: AddEditCardModalType,
+    card: CardType,
 }
 const AddEditCardModal = (props: Props) => {
-    const { modal, onClose, list } = props
-    const {actionType, isAddEditModalOpen,} =modal
+    const { modal, onClose, card } = props
+    const { actionType, isAddEditModalOpen,listName } = modal
     const { useForm, Item } = Form
     const [form] = useForm()
-
-    const renderTitle = actionType == "add" ? (<> Add Card in <span className='text-[#1677ff]'>{list?.listName || ""} </span> List</>) : (<>Update</>)
+    const renderTitle = actionType == "add" ? (<> Add Card in <span className='text-[#1677ff]'>{listName || ""} </span> List</>) : (<>Update</>)
 
     const priorityOptions = [
         {
-            value: 'high', 
-            label: (<div className='flex items-center gap-2 text-sm'><FcHighPriority/> High</div>)
+            value: 'high',
+            label: (<div className='flex items-center gap-2 text-sm'><FcHighPriority /> High</div>)
         },
         {
-            value: 'medium', 
-            label: (<div className='flex items-center gap-2'><FcMediumPriority/> Medium</div>)
+            value: 'medium',
+            label: (<div className='flex items-center gap-2'><FcMediumPriority /> Medium</div>)
         },
         {
-            value: 'low', 
-            label: (<div className='flex items-center gap-2'><FcLowPriority/> Low</div>)
+            value: 'low',
+            label: (<div className='flex items-center gap-2'><FcLowPriority /> Low</div>)
         },];
 
-    const labels= [
+    const labels = [
         {
             label: 'TEST 1',
             color: 'red'
@@ -92,23 +93,34 @@ const AddEditCardModal = (props: Props) => {
         }
     ]
 
-    const renderLabels = labels.map((label,id)=>(
-        <Tag  className='h-6 mr-1' color={label.color} key={id}> {label.label}</Tag>
-    ))
+    
 
+    const renderLabels = labels.map((label, id) => (
+        <Tag className='h-6 mr-1' color={label.color} key={id}> {label.label}</Tag>
+    ))
+        useEffect(()=>{
+            form.setFieldsValue({...card})
+        },[form,card])
     return (
         <>
             <Modal
+                forceRender
                 width={700}
-                onCancel={()=>{
-                    onClose(null,{})
+                onCancel={() => {
+                    form.resetFields()
+                    onClose(null)
+
                 }}
                 open={isAddEditModalOpen}
                 title={renderTitle}
-                footer={<Button>wew</Button>}>
+                footer={<Button onClick={()=>{
+                    form.resetFields()
+
+                }}>wew</Button>}>
                 <Form
                     form={form}
                     layout='vertical'
+                    initialValues={{cardName:"wow"}}
                 >
                     <Item
                         required
@@ -119,19 +131,19 @@ const AddEditCardModal = (props: Props) => {
                             { min: 3, max: 20 },
                         ]}
                     >
-                        <Input placeholder='Enter Card Name' />
+                        <Input placeholder='Enter Card Name' value={"asdasdas"} />
 
                     </Item>
 
                     <Item label="Labels">
-                   <Space wrap size={[0,3]}>
-                   {renderLabels}
-                    <Button size='small' className='bg-[#1677ff]' type='primary' icon={<IoMdAdd/>}/>
-                   </Space>
-                    
+                        <Space wrap size={[0, 3]}>
+                            {renderLabels}
+                            <Button size='small' className='bg-[#1677ff]' type='primary' icon={<IoMdAdd />} />
+                        </Space>
+
                     </Item>
 
-                   
+
 
                     <Item label="Priority">
                         <Select
