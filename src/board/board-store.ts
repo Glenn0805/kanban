@@ -1,23 +1,38 @@
 import { create } from 'zustand';
 import useShallowHook from 'Shared/hooks/useShallowHook';
-import { boardInitalState, boardReducer } from './board-reducer';
-import { DipatchAction } from 'Shared/interface/IReducer';
 import { KanbanData } from './type/BoardType';
-import { persist, createJSONStorage } from 'zustand/middleware'
+import { persist, createJSONStorage, devtools } from 'zustand/middleware'
+import data from '../data.json'
 
-const boardStore = create<KanbanData & DipatchAction>()(
-    persist(
-        (set) => ({
-            ...boardInitalState,
-            dispatch: (action) => set((state: KanbanData) => boardReducer(state, action))
-        }),
+const boardInitalState:KanbanData = {
+    data: data || [],
+    activeCard: null,
+    addEditModal: {
+        modal: {
+            isAddEditModalOpen: false,
+            actionType: null,
+            listName: ""
+        },
+        card: {
+            cardName: "",
+            id: "",
+            cardLevel: 'medium'
+        }
+    }
+}
+
+
+export const boardStore = create<KanbanData>()(
+    devtools(persist(
+        () => boardInitalState,
         {
             name: "boardState",
-            storage: createJSONStorage(() => localStorage)
+            storage: createJSONStorage(() => localStorage),
+            partialize: state =>( {data:state.data})
         }
-    )
+    ))
 )
 
-const useBoardStore = (): KanbanData & DipatchAction => useShallowHook(boardStore)
+const useBoardStore = (): KanbanData => useShallowHook(boardStore)
 
 export default useBoardStore

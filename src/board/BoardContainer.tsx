@@ -14,20 +14,19 @@ import { Button, Card, Typography } from 'antd'
 const BoardContainer = (props: Board) => {
     const { boardId, boardName, lists } = props
     const boardStore = useBoardStore()
-    const dispatch= boardStore.dispatch
     const data= boardStore.data
     const activeCard= boardStore.activeCard
     const addEditModal= boardStore.addEditModal
     // const { dispatch, data, activeCard, addEditModal } = boardStore
 
     const toggleModal: ToggleAddEditModal = ({ actionType, listName, listId, card }) => {
-        dispatch(toggleAddEditModal({
+        toggleAddEditModal({
             isAddEditModalOpen: addEditModal.modal.isAddEditModalOpen,
             listName: listName,
             listId: listId,
             actionType: actionType
         },
-            card))
+            card)
     }
 
     const renderLists = lists?.map((list) => (
@@ -43,11 +42,11 @@ const BoardContainer = (props: Board) => {
     );
 
     const handleAddCard = (card: CardType, listId: string) => {
-        dispatch(addCardToList(card, data, boardId, listId))
+        addCardToList(card, data, boardId, listId)
     }
 
     const handleUpdateCard = (card: CardType, listId: string, cardId: UniqueIdentifier) => {
-        dispatch(updateCardToList(card, data, boardId, listId, cardId))
+        updateCardToList(card, data, boardId, listId, cardId)
     }
     return (
         <>
@@ -64,13 +63,13 @@ const BoardContainer = (props: Board) => {
                         collisionDetection={closestCorners}
                         id={boardId}
                         onDragStart={(event) => {
-                            dispatch(handleDragStart(event, lists))
+                           handleDragStart(event, lists)
                         }}
                         onDragOver={(event) => {
-                            dispatch(handleDragOver(event, lists, boardId, data))
+                           handleDragOver(event, lists, boardId, data)
                         }}
                         onDragEnd={(event) => {
-                            dispatch(handleDragEnd(event, lists, boardId, data))
+                           handleDragEnd(event, lists, boardId, data)
                         }}>
                         {renderLists}
                         <DragOverlay>{activeCard?.id ? <ActiveCardComponent cardLevel={activeCard.cardLevel} cardName={activeCard.cardName} id={activeCard.id} /> : null}</DragOverlay>
