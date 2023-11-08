@@ -11,10 +11,10 @@ type Props = {
     modal: AddEditCardModalType,
     card: CardType,
     addCard: (card: CardType, listId: string) => void,
-    updateCard:  (card: CardType, listId: string,cardId:UniqueIdentifier) => void,
+    updateCard: (card: CardType, listId: string, cardId: UniqueIdentifier) => void,
 }
 const AddEditCardModal = (props: Props) => {
-    const { modal, onClose, card, addCard,updateCard } = props
+    const { modal, onClose, card, addCard, updateCard } = props
     const { actionType, isAddEditModalOpen, listName, listId } = modal
     const { useForm, Item } = Form
     const [form] = useForm()
@@ -113,20 +113,25 @@ const AddEditCardModal = (props: Props) => {
         description: "",
     }
 
-    const handleSubmit = () =>{
-        const newCard:CardType = form.getFieldsValue(true)
-        if(actionType==='add'){
-            console.log("add")
-            addCard(newCard, listId || "")
-        }
+    const handleSubmit = () => {
+        form.validateFields().then(() => {
+            const newCard: CardType = form.getFieldsValue(true)
 
-        if(actionType==='edit'){
-            console.log("edit")
-            updateCard(newCard,listId || "",card.id)
-        }
-        form.resetFields()
-        onClose({ actionType: null })
-        
+            if (actionType === 'add') {
+                addCard(newCard, listId || "")
+            }
+
+            if (actionType === 'edit') {
+                updateCard(newCard, listId || "", card.id)
+            }
+            form.validateFields().then
+            form.resetFields()
+            onClose({ actionType: null })
+        }).catch(error => {
+            console.log(error)
+        })
+
+
     }
 
     const renderModalFooter = (
@@ -135,8 +140,8 @@ const AddEditCardModal = (props: Props) => {
                 onClose({ actionType: null })
                 form.resetFields()
             }}>Cancel</Button>
-            <Button className='bg-[#1677ff]' type='primary' onClick={handleSubmit}>
-                {actionType==="add" ? "Save" : "Update" }
+            <Button className='bg-[#1677ff]' type='primary' onClick={handleSubmit} htmlType="submit">
+                {actionType === "add" ? "Save" : "Update"}
             </Button>
         </div>
     )
@@ -158,6 +163,9 @@ const AddEditCardModal = (props: Props) => {
                     form={form}
                     layout='vertical'
                     initialValues={formCardDefaultVal}
+                    name='cardForm'
+                    // onFinish={handleSubmit}
+                    scrollToFirstError
                 >
 
                     <Item
@@ -196,6 +204,7 @@ const AddEditCardModal = (props: Props) => {
 
                     </Item>
                 </Form>
+
             </Modal>
         </>
     )
