@@ -26,7 +26,7 @@ const ListComponent = (props:Props) => {
                     ref={setNodeRef}
                     bordered={false}
                     title={listName}
-                    className='w-72 h-full max-h-[700px] border-t-8 p-0'
+                    className='w-96 h-full max-h-[700px] border-t-8 p-0'
                     style={{ borderTopColor: color }}
                     headStyle={{ minHeight: "20px", padding: "8px" }}
                     bodyStyle={
