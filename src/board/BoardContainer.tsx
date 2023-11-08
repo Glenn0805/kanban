@@ -14,7 +14,11 @@ import { Button, Card, Typography } from 'antd'
 const BoardContainer = (props: Board) => {
     const { boardId, boardName, lists } = props
     const boardStore = useBoardStore()
-    const { dispatch, data, activeCard, addEditModal } = boardStore
+    const dispatch= boardStore.dispatch
+    const data= boardStore.data
+    const activeCard= boardStore.activeCard
+    const addEditModal= boardStore.addEditModal
+    // const { dispatch, data, activeCard, addEditModal } = boardStore
 
     const toggleModal: ToggleAddEditModal = ({ actionType, listName, listId, card }) => {
         dispatch(toggleAddEditModal({

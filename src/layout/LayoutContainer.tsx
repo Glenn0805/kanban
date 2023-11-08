@@ -11,8 +11,9 @@ import themeConfig from './themeConfig'
 const LayoutContainer = () => {
     const { Content } = Layout
     const layoutState = useLayoutStore()
-
-    const { isSideBarOpen, themeColor, dispatch } = layoutState
+    const isSideBarOpen =layoutState.isSideBarOpen
+    const themeColor=layoutState.themeColor
+    const dispatch=layoutState.dispatch
     // const appTheme = themeColor === "dark" ? darkAlgorithm : defaultAlgorithm
     const appTheme =themeConfig[themeColor]
 

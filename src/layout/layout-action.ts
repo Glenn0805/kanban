@@ -9,7 +9,6 @@ export const toggleSideBar = (isSideBarOpen: boolean) => {
 
 export const toggleTheme = (themeColor: string) => {
     const selectedTheme = themeColor === "light" ? "dark" : "light"
-    localStorage.setItem('theme', selectedTheme)
     return { payload: { themeColor: selectedTheme } }
 }
 

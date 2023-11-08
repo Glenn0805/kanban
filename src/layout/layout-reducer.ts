@@ -2,14 +2,14 @@ import { Action } from 'Shared/interface/IReducer';
 import { ILayoutState } from './interface/LayoutStoreInterface';
 export const initialLayoutState:ILayoutState={
     isSideBarOpen:false,
-    themeColor: localStorage.getItem("theme") || "light"
+    themeColor:  "light"
 }
 
 
 const reducer = (state:ILayoutState,action:Action)=>{
     return {
        ...state,
-       ...action.payload
+       ...action?.payload
     }
 } 
 
