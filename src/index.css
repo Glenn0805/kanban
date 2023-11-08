@@ -4,6 +4,7 @@
 body {
   margin: 0;
   min-width: 320px;
+  transition: important( background 2s);
   /* height: 100vh; */
 }
 

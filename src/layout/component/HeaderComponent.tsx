@@ -24,7 +24,7 @@ const HeaderComponent = (props:Props) => {
                             Kanban
                         </span>
                     </div>
-                    <Button icon={<IoCreateOutline />} className='bg-[#1677ff]' type='primary'> Create  Board</Button>
+                    <Button icon={<IoCreateOutline />} className='bg-[#1677ff] shadow-none' type='primary'> Create  Board</Button>
                 </div>
                 <div>
                     <SwitchThemeComponent theme={theme} toggleTheme={toggleTheme} />

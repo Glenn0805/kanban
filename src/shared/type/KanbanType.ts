@@ -1,15 +1,23 @@
 import { UniqueIdentifier } from '@dnd-kit/core'
 
-export type Card = {
-    id: UniqueIdentifier,
-    cardName: string
+export type CardLabel ={
+    label:string,
+    color:string
+}
+
+export type CardType = {
+    id: UniqueIdentifier | string,
+    cardName: string,
+    description?:string,
+    cardLevel:string,
+    cardLabel?:CardLabel[]
 }
 
 export type List = {
     listId: string,
     listName: string,
     color?:string,
-    cards: Card[] | []
+    cards: CardType[] | [],
 }
 
 export type Board = {
@@ -18,7 +26,9 @@ export type Board = {
     lists: List[] | []
 }
 
-export type KanbanData ={
-    data : Board[] | [],
-    activeCard:Card | null
+export type AddEditCardModalType = {
+    isAddEditModalOpen:boolean,
+    actionType?: "add" | "edit" | null,
+    listName?: string ,
+    listId?:string
 }

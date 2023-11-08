@@ -1,4 +1,4 @@
-import { Board, Card, List } from 'Shared/type/KanbanType';
+import { AddEditCardModalType, Board, CardType, List } from 'Shared/type/KanbanType';
 import { DragEndEvent, DragOverEvent, DragStartEvent, UniqueIdentifier } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 
@@ -20,7 +20,7 @@ function findContainer(listId: UniqueIdentifier | undefined, lists: List[] | und
     return containerId
 }
 
-export const handleDragEnd = (event: DragEndEvent, lists: List[], boarId: string, boards: Board[]) => {
+export const handleDragEnd = (event: DragEndEvent, lists: List[], boardId: string, boards: Board[]) => {
     const { active, over } = event;
     const overId = over?.id;
     const activeId = active.id
@@ -38,7 +38,7 @@ export const handleDragEnd = (event: DragEndEvent, lists: List[], boarId: string
 
     const newListId: string = overContainer.toString() || activeContainer.toString()
     const list: List = lists.filter(list => list.listId == newListId)[0]
-    const currentBoard: Board = boards.filter(board => board.boardId === boarId)[0]
+    const currentBoard: Board = boards.filter(board => board.boardId === boardId)[0]
 
 
     const oldIndex = active.data.current?.sortable.index
@@ -57,7 +57,7 @@ export const handleDragEnd = (event: DragEndEvent, lists: List[], boarId: string
         return {
             payload: {
                 data: [
-                    ...boards.filter(board => board.boardId !== boarId),
+                    ...boards.filter(board => board.boardId !== boardId),
                     currentBoard
                 ],
                 activeCard: null
@@ -71,7 +71,7 @@ export const handleDragStart = (event: DragStartEvent, lists: List[]) => {
     const { data, id } = active;
     const current = data.current
     const currentList: List = lists.filter(list => list.listId === current?.sortable.containerId)[0]
-    const cards: Card[] = currentList.cards
+    const cards: CardType[] = currentList.cards
     const activeCard = cards.filter((item) => item.id == id)[0]
     return {
         payload: {
@@ -118,7 +118,7 @@ export const handleDragOver = (event: DragOverEvent, lists: List[], boardId: str
     const newList: List[] = []
 
     lists.forEach((list) => {
-        let newCards: Card[] = []
+        let newCards: CardType[] = []
         if (list.listId !== activeContainer && list.listId !== overContainer) {
             newList.push(list)
         }
@@ -162,3 +162,102 @@ export const handleDragOver = (event: DragOverEvent, lists: List[], boardId: str
         }
     }
 }
+
+export const toggleAddEditModal = (addEditModal: AddEditCardModalType, card?: CardType) => {
+    const { isAddEditModalOpen, actionType = null, listName, listId } = addEditModal
+    const obj: { modal: AddEditCardModalType, card: CardType } = {
+        modal: {
+            isAddEditModalOpen: !isAddEditModalOpen,
+            actionType: actionType,
+            listName: listName,
+            listId: listId
+        },
+        card: {
+            cardName: "",
+            id: "",
+            cardLevel: "medium"
+        }
+    }
+
+
+    if (actionType === "edit" && card) {
+        obj.card = { ...card }
+    }
+    return {
+        payload: {
+            addEditModal: {
+                ...obj
+            }
+
+        }
+    }
+}
+
+export const addCardToList = (card: CardType, boards: Board[], boardId: string, listId: string) => {
+    const currentBoard: Board = boards.filter(board => board.boardId === boardId)[0]
+    if (!currentBoard) return
+    const currentList = currentBoard.lists
+
+    const newList = currentList.map(list => {
+        if (list.listId == listId) {
+            list.cards.push(card)
+        }
+        return list
+    })
+
+    const newBoard: Board = {
+        boardId,
+        boardName: currentBoard.boardName,
+        lists: [
+            ...newList,
+        ]
+    }
+    return {
+        payload: {
+            data: [
+                ...boards.filter(board => board.boardId !== boardId),
+                newBoard
+            ]
+        }
+    }
+
+}
+
+export const updateCardToList = (card: CardType, boards: Board[], boardId: string, listId: string, cardId: UniqueIdentifier) => {
+    const currentBoard: Board = boards.filter(board => board.boardId === boardId)[0]
+    if (!currentBoard) return
+    const currentList = currentBoard.lists
+
+    const newList = currentList.map(list => {
+        if (list.listId == listId) {
+            const newCard = list.cards.map((cardInfo) => {
+                if (cardInfo.id == cardId) {
+                    cardInfo = {
+                        ...card
+                    }
+                }
+                return cardInfo
+            })
+            list.cards = newCard
+        }
+        return list
+    })
+
+    const newBoard: Board = {
+        boardId,
+        boardName: currentBoard.boardName,
+        lists: [
+            ...newList,
+        ]
+    }
+    return {
+        payload: {
+            data: [
+                ...boards.filter(board => board.boardId !== boardId),
+                newBoard
+            ]
+        }
+    }
+
+}
+
