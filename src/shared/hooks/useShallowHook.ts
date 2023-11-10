@@ -1,8 +1,9 @@
 import { StoreApi, UseBoundStore } from 'zustand'
-import { useShallow } from 'zustand/react/shallow'
+import { shallow } from 'zustand/shallow'
 
-const useShallowHook = (store:UseBoundStore<StoreApi<NonNullable<unknown>>>)=>{
-    return store(useShallow((state:any)=> state))
+const useShallowHook = (useStore: UseBoundStore<StoreApi<NonNullable<unknown>>>) => {
+    return useStore(
+        (state: any) => ({ ...state }), shallow)
 }
 
 export default useShallowHook

@@ -6,7 +6,7 @@ export type CardLabel ={
 }
 
 export type CardType = {
-    id: UniqueIdentifier | string,
+    id: string,
     cardName: string,
     description?:string,
     cardLevel:string,

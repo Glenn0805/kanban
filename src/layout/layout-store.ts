@@ -1,20 +1,24 @@
-import { ILayoutState } from './interface/LayoutStoreInterface';
 import { create } from 'zustand';
-import { layoutReducer, initialLayoutState } from './layout-reducer';
-import { Action, DipatchAction } from 'Shared/interface/IReducer';
 import useShallowHook from 'Shared/hooks/useShallowHook';
 import { persist,createJSONStorage } from 'zustand/middleware';
 
-const layoutStore = create<ILayoutState & DipatchAction>()(
-    persist((set) => ({
-    ...initialLayoutState,
-    dispatch: (action: Action) => set((state: ILayoutState) => layoutReducer(state, action))
-}),{
+const initialLayoutState={
+    isSideBarOpen:false,
+    themeColor:  "light"
+}
+
+type InitialState = typeof initialLayoutState
+
+export const layoutStore = create<InitialState>()(
+    persist(() => initialLayoutState,{
     name:"themeState",
-    storage:createJSONStorage(()=>localStorage)
+    storage:createJSONStorage(()=>localStorage),
+    partialize:(state)=>({themeColor:state.themeColor})
 }))
 
-const useLayoutStore = (): ILayoutState & DipatchAction => useShallowHook(layoutStore)
+const useLayoutStore = (): InitialState => useShallowHook(layoutStore)
 
 export default useLayoutStore
+
+
 

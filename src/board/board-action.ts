@@ -1,8 +1,18 @@
 import { AddEditCardModalType, Board, CardType, List } from 'Shared/type/KanbanType';
 import { DragEndEvent, DragOverEvent, DragStartEvent, UniqueIdentifier } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
+import { boardStore } from './board-store';
+import { KanbanData } from './type/BoardType';
 
-function findContainer(listId: UniqueIdentifier | undefined, lists: List[] | undefined) {
+
+const initializeState = (payload) => {
+    boardStore.setState(state => ({
+        ...state,
+        ...payload
+    }))
+}
+
+const findContainer = (listId: UniqueIdentifier | undefined, lists: List[] | undefined) => {
     if (!listId || !lists) return
     if (lists.some(list => list.listId === listId)) {
         return listId
@@ -54,15 +64,34 @@ export const handleDragEnd = (event: DragEndEvent, lists: List[], boardId: strin
     currentBoard.lists = newList
 
     if (active.id !== over?.id) {
-        return {
-            payload: {
+
+        boardStore.setState((state) => (
+            {
+                ...state,
                 data: [
                     ...boards.filter(board => board.boardId !== boardId),
                     currentBoard
                 ],
                 activeCard: null
             }
-        }
+        ))
+        initializeState({
+            data: [
+                ...boards.filter(board => board.boardId !== boardId),
+                currentBoard
+            ],
+            activeCard: null
+
+        })
+        // return {
+        //     payload: {
+        //         data: [
+        //             ...boards.filter(board => board.boardId !== boardId),
+        //             currentBoard
+        //         ],
+        //         activeCard: null
+        //     }
+        // }
     }
 }
 
@@ -73,11 +102,8 @@ export const handleDragStart = (event: DragStartEvent, lists: List[]) => {
     const currentList: List = lists.filter(list => list.listId === current?.sortable.containerId)[0]
     const cards: CardType[] = currentList.cards
     const activeCard = cards.filter((item) => item.id == id)[0]
-    return {
-        payload: {
-            activeCard: activeCard
-        }
-    }
+
+    initializeState({activeCard: activeCard})
 }
 
 export const handleDragOver = (event: DragOverEvent, lists: List[], boardId: string, boards: Board[]) => {
@@ -153,14 +179,12 @@ export const handleDragOver = (event: DragOverEvent, lists: List[], boardId: str
         lists: newList
     }
 
-    return {
-        payload: {
-            data: [
-                ...boards.filter(board => board.boardId !== boardId),
-                newBoard
-            ],
+    initializeState(
+        {
+            data: [...boards.filter(board => board.boardId !== boardId),
+                newBoard]
         }
-    }
+    )
 }
 
 export const toggleAddEditModal = (addEditModal: AddEditCardModalType, card?: CardType) => {
@@ -183,14 +207,9 @@ export const toggleAddEditModal = (addEditModal: AddEditCardModalType, card?: Ca
     if (actionType === "edit" && card) {
         obj.card = { ...card }
     }
-    return {
-        payload: {
-            addEditModal: {
-                ...obj
-            }
-
-        }
-    }
+   initializeState({addEditModal: {
+    ...obj
+}})
 }
 
 export const addCardToList = (card: CardType, boards: Board[], boardId: string, listId: string) => {
@@ -212,14 +231,13 @@ export const addCardToList = (card: CardType, boards: Board[], boardId: string, 
             ...newList,
         ]
     }
-    return {
-        payload: {
-            data: [
-                ...boards.filter(board => board.boardId !== boardId),
-                newBoard
-            ]
-        }
-    }
+
+    initializeState({
+        data: [
+            ...boards.filter(board => board.boardId !== boardId),
+            newBoard
+        ]
+    })
 
 }
 
@@ -250,14 +268,10 @@ export const updateCardToList = (card: CardType, boards: Board[], boardId: strin
             ...newList,
         ]
     }
-    return {
-        payload: {
-            data: [
-                ...boards.filter(board => board.boardId !== boardId),
-                newBoard
-            ]
-        }
-    }
+    initializeState({
+        data: [...boards.filter(board => board.boardId !== boardId),
+            newBoard]
+    })
 
 }
 
