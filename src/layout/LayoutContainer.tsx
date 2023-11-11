@@ -29,7 +29,7 @@ const LayoutContainer = () => {
         <>
             <ConfigProvider
                 theme={{...appTheme}}>
-                <Layout>
+                <Layout >
                     <HeaderComponent toggleSideBar={toggleSideBarHandler} toggleTheme={toggleThemeHandler} theme={themeColor}/>
                     <SideBarComponent isOpen={isSideBarOpen} toggleSideBar={toggleSideBarHandler} />
                     <Content className='flex-col  h-screen'>

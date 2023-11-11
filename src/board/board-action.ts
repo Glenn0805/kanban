@@ -5,11 +5,10 @@ import { boardStore } from './board-store';
 import { KanbanData } from './type/BoardType';
 
 
-const initializeState = (payload) => {
-    boardStore.setState(state => ({
-        ...state,
+const setStateAction = (payload, actionType: string) => {
+    boardStore.setState(() => ({
         ...payload
-    }))
+    }), false, actionType)
 }
 
 const findContainer = (listId: UniqueIdentifier | undefined, lists: List[] | undefined) => {
@@ -75,23 +74,14 @@ export const handleDragEnd = (event: DragEndEvent, lists: List[], boardId: strin
                 activeCard: null
             }
         ))
-        initializeState({
+        setStateAction({
             data: [
                 ...boards.filter(board => board.boardId !== boardId),
                 currentBoard
             ],
             activeCard: null
 
-        })
-        // return {
-        //     payload: {
-        //         data: [
-        //             ...boards.filter(board => board.boardId !== boardId),
-        //             currentBoard
-        //         ],
-        //         activeCard: null
-        //     }
-        // }
+        }, "handleDragEnd")
     }
 }
 
@@ -103,7 +93,7 @@ export const handleDragStart = (event: DragStartEvent, lists: List[]) => {
     const cards: CardType[] = currentList.cards
     const activeCard = cards.filter((item) => item.id == id)[0]
 
-    initializeState({activeCard: activeCard})
+    setStateAction({ activeCard: activeCard }, "handleDragStart")
 }
 
 export const handleDragOver = (event: DragOverEvent, lists: List[], boardId: string, boards: Board[]) => {
@@ -179,11 +169,11 @@ export const handleDragOver = (event: DragOverEvent, lists: List[], boardId: str
         lists: newList
     }
 
-    initializeState(
+    setStateAction(
         {
             data: [...boards.filter(board => board.boardId !== boardId),
                 newBoard]
-        }
+        }, "handleDragOver"
     )
 }
 
@@ -207,9 +197,11 @@ export const toggleAddEditModal = (addEditModal: AddEditCardModalType, card?: Ca
     if (actionType === "edit" && card) {
         obj.card = { ...card }
     }
-   initializeState({addEditModal: {
-    ...obj
-}})
+    setStateAction({
+        addEditModal: {
+            ...obj
+        }
+    }, "toggleAddEditModal")
 }
 
 export const addCardToList = (card: CardType, boards: Board[], boardId: string, listId: string) => {
@@ -232,12 +224,12 @@ export const addCardToList = (card: CardType, boards: Board[], boardId: string, 
         ]
     }
 
-    initializeState({
+    setStateAction({
         data: [
             ...boards.filter(board => board.boardId !== boardId),
             newBoard
         ]
-    })
+    }, "addCardToList")
 
 }
 
@@ -268,10 +260,10 @@ export const updateCardToList = (card: CardType, boards: Board[], boardId: strin
             ...newList,
         ]
     }
-    initializeState({
+    setStateAction({
         data: [...boards.filter(board => board.boardId !== boardId),
             newBoard]
-    })
+    }, "updateCardToList")
 
 }
 

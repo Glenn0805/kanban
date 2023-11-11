@@ -4,7 +4,8 @@ import { KanbanData } from './type/BoardType';
 import { persist, createJSONStorage, devtools } from 'zustand/middleware'
 import data from '../data.json'
 
-const boardInitalState:KanbanData = {
+
+const boardInitalState: KanbanData = {
     data: data || [],
     activeCard: null,
     addEditModal: {
@@ -23,14 +24,18 @@ const boardInitalState:KanbanData = {
 
 
 export const boardStore = create<KanbanData>()(
-    devtools(persist(
-        () => boardInitalState,
-        {
-            name: "boardState",
-            storage: createJSONStorage(() => localStorage),
-            partialize: state =>( {data:state.data})
-        }
-    ))
+    persist(
+        devtools(() => boardInitalState,
+            {
+                name: "boardState",
+                store: "boardStore"
+            }
+        ), {
+        name: "boardState",
+        storage: createJSONStorage(() => localStorage),
+        partialize: state => ({ data: state.data })
+    }
+    )
 )
 
 const useBoardStore = (): KanbanData => useShallowHook(boardStore)
