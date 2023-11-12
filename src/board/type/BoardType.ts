@@ -1,4 +1,4 @@
-import { AddEditCardModalType, Board, CardType } from 'src/shared/type/KanbanType'
+import { AddEditCardModalType, AddEditListModalType, Board, CardType, List } from 'src/shared/type/KanbanType'
 
 export type KanbanData = {
     data: Board[] | [],
@@ -6,7 +6,13 @@ export type KanbanData = {
     addEditModal: {
         modal: AddEditCardModalType,
         card: CardType
+    },
+    addEditListModal: {
+        modal: AddEditListModalType,
+        list: List
     }
 }
 
-export type ToggleAddEditModal= (params:{actionType:"add" | "edit" | null,listName?:string,listId?:string,card?:CardType})=>void
+export type ToggleAddEditModal = (params: { actionType: "add" | "edit" | null, listName?: string, listId?: string, card?: CardType }) => void
+
+export type ToggleAddEditListModal = (params: { actionType: "add" | "edit" | null, boardName?: string, boardId?: string, list?: List }) => void

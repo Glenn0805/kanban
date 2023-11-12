@@ -25,7 +25,7 @@ const ListComponent = (props:Props) => {
                 <Card
                     ref={setNodeRef}
                     bordered={false}
-                    title={listName}
+                    title={listName.toUpperCase()}
                     className='w-96 h-full max-h-[700px] border-t-8 p-0'
                     style={{ borderTopColor: color }}
                     headStyle={{ minHeight: "20px", padding: "8px" }}

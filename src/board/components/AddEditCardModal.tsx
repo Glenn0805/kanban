@@ -124,7 +124,6 @@ const AddEditCardModal = (props: Props) => {
             if (actionType === 'edit') {
                 updateCard(newCard, listId || "", card.id)
             }
-            form.validateFields().then
             form.resetFields()
             onClose({ actionType: null })
         }).catch(error => {
@@ -141,7 +140,7 @@ const AddEditCardModal = (props: Props) => {
                 form.resetFields()
             }}>Cancel</Button>
             <Button className='bg-[#1677ff]' type='primary' onClick={handleSubmit} htmlType="submit">
-                {actionType === "add" ? "Save" : "Update"}
+                {actionType === "add" ? "Create Card" : "Update Card"}
             </Button>
         </div>
     )

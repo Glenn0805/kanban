@@ -32,3 +32,10 @@ export type AddEditCardModalType = {
     listName?: string ,
     listId?:string
 }
+
+export type AddEditListModalType = {
+    isAddEditModalOpen:boolean,
+    actionType?: "add" | "edit" | null,
+    boardName?: string ,
+    boardId?:string
+}

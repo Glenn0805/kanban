@@ -1,4 +1,4 @@
-import { AddEditCardModalType, Board, CardType, List } from 'Shared/type/KanbanType';
+import { AddEditCardModalType, AddEditListModalType, Board, CardType, List } from 'Shared/type/KanbanType';
 import { DragEndEvent, DragOverEvent, DragStartEvent, UniqueIdentifier } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 import { boardStore } from './board-store';
@@ -267,3 +267,52 @@ export const updateCardToList = (card: CardType, boards: Board[], boardId: strin
 
 }
 
+export const toggleAddEditListModal = (addEditModal: AddEditListModalType, list?: List) => {
+    const { isAddEditModalOpen, actionType = null, boardName, boardId } = addEditModal
+    const obj: { modal: AddEditListModalType, list: List } = {
+        modal: {
+            isAddEditModalOpen: !isAddEditModalOpen,
+            actionType: actionType,
+            boardName,
+            boardId
+        },
+        list: {
+            cards:[],
+            listId:"",
+            listName:""
+        }
+    }
+
+
+    if (actionType === "edit" && list) {
+        obj.list = { ...list }
+    }
+    setStateAction({
+        addEditListModal: {
+            ...obj
+        }
+    }, "toggleAddEditListModal")
+}
+
+export const addListToBoard = ( boards: Board[], boardId: string, list: List) => {
+    const currentBoard: Board = boards.filter(board => board.boardId === boardId)[0]
+    if (!currentBoard) return
+    const currentList = currentBoard.lists
+
+    const newBoard: Board = {
+        boardId,
+        boardName: currentBoard.boardName,
+        lists: [
+            ...currentList,
+            list
+        ]
+    }
+
+    setStateAction({
+        data: [
+            ...boards.filter(board => board.boardId !== boardId),
+            newBoard
+        ]
+    }, "addListToBoard")
+
+}

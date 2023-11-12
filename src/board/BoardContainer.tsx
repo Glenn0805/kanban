@@ -1,23 +1,24 @@
 import { DndContext, DragOverlay, KeyboardSensor, UniqueIdentifier, closestCorners, useSensor, useSensors } from '@dnd-kit/core'
-import { Board, CardType } from 'Shared/type/KanbanType'
+import { Board, CardType, List } from 'Shared/type/KanbanType'
 import ListComponent from './components/ListComponent'
 import useBoardStore from './board-store'
-import { addCardToList, handleDragEnd, handleDragOver, handleDragStart, toggleAddEditModal, updateCardToList } from './board-action'
+import { addCardToList, addListToBoard, handleDragEnd, handleDragOver, handleDragStart, toggleAddEditListModal, toggleAddEditModal, updateCardToList } from './board-action'
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable'
 import ActiveCardComponent from './components/ActiveCardComponent'
 import AddEditCardModal from './components/AddEditCardModal'
 import { MouseSensor, PointerSensor } from './config/CustomSensor'
-import { ToggleAddEditModal } from './type/BoardType'
+import { ToggleAddEditListModal, ToggleAddEditModal } from './type/BoardType'
 import { Button, Card, Typography } from 'antd'
+import AddEditListModal from './components/AddEditListModal'
 
 
 const BoardContainer = (props: Board) => {
     const { boardId, boardName, lists } = props
     const boardStore = useBoardStore()
-    const data= boardStore.data
-    const activeCard= boardStore.activeCard
-    const addEditModal= boardStore.addEditModal
-    // const { dispatch, data, activeCard, addEditModal } = boardStore
+    const data = boardStore.data
+    const activeCard = boardStore.activeCard
+    const addEditModal = boardStore.addEditModal
+    const addEditListModal = boardStore.addEditListModal
 
     const toggleModal: ToggleAddEditModal = ({ actionType, listName, listId, card }) => {
         toggleAddEditModal({
@@ -27,6 +28,16 @@ const BoardContainer = (props: Board) => {
             actionType: actionType
         },
             card)
+    }
+
+    const toggleListModal: ToggleAddEditListModal = ({ actionType, boardName, boardId, list }) => {
+        toggleAddEditListModal({
+            isAddEditModalOpen: addEditListModal.modal.isAddEditModalOpen,
+            boardName,
+            boardId,
+            actionType: actionType
+        },
+            list)
     }
 
     const renderLists = lists?.map((list) => (
@@ -48,36 +59,56 @@ const BoardContainer = (props: Board) => {
     const handleUpdateCard = (card: CardType, listId: string, cardId: UniqueIdentifier) => {
         updateCardToList(card, data, boardId, listId, cardId)
     }
+
+    const handleAddList = (list:List) => {
+        addListToBoard(data,boardId,list)
+    }
     return (
         <>
             <div className='flex-col p-4'>
                 <Card className=' mb-4'>
                     <div className='flex gap-1'>
                         <Typography.Text className='text-2xl text-center font-semibold'>{boardName}</Typography.Text>
-                        <Button type='text'>Create List</Button>
+                        <Button type='text'
+                            onClick={()=>{
+                                toggleListModal({actionType:"add",boardName,boardId})
+                            }}>Create List</Button>
                     </div>
                 </Card>
-                <div className=' flex gap-4'>
+                <div className=' flex gap-4 flex-nowrap'>
                     <DndContext
                         sensors={sensors}
                         collisionDetection={closestCorners}
                         id={boardId}
                         onDragStart={(event) => {
-                           handleDragStart(event, lists)
+                            handleDragStart(event, lists)
                         }}
                         onDragOver={(event) => {
-                           handleDragOver(event, lists, boardId, data)
+                            handleDragOver(event, lists, boardId, data)
                         }}
                         onDragEnd={(event) => {
-                           handleDragEnd(event, lists, boardId, data)
+                            handleDragEnd(event, lists, boardId, data)
                         }}>
                         {renderLists}
                         <DragOverlay>{activeCard?.id ? <ActiveCardComponent cardLevel={activeCard.cardLevel} cardName={activeCard.cardName} id={activeCard.id} /> : null}</DragOverlay>
                     </DndContext>
                 </div>
             </div>
-            <AddEditCardModal addCard={handleAddCard} updateCard={handleUpdateCard} modal={addEditModal.modal} card={addEditModal.card} key={"addEditCardModal"} onClose={toggleModal} />
-
+            <AddEditCardModal
+                addCard={handleAddCard}
+                updateCard={handleUpdateCard}
+                modal={addEditModal.modal}
+                card={addEditModal.card}
+                key={"addEditCardModal"}
+                onClose={toggleModal}
+            />
+            <AddEditListModal
+                modal={addEditListModal.modal}
+                list={addEditListModal.list}
+                key={"addEditListModal"}
+                onClose={toggleListModal}
+                handleAddList={handleAddList}
+            />
         </>
     )
 }

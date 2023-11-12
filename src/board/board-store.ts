@@ -12,12 +12,26 @@ const boardInitalState: KanbanData = {
         modal: {
             isAddEditModalOpen: false,
             actionType: null,
-            listName: ""
+            listName: "",
+            listId:""
         },
         card: {
             cardName: "",
             id: "",
             cardLevel: 'medium'
+        }
+    },
+    addEditListModal:{
+        modal:{
+            isAddEditModalOpen:false,
+            actionType:null,
+            boardName:"",
+            boardId:""
+        },
+        list:{
+            cards:[],
+            listId:"",
+            listName:"",
         }
     }
 }
