@@ -2,7 +2,7 @@ import { DndContext, DragOverlay, KeyboardSensor, UniqueIdentifier, closestCorne
 import { Board, CardType, List } from 'Shared/type/KanbanType'
 import ListComponent from './components/ListComponent'
 import useBoardStore from './board-store'
-import { addCardToList, addListToBoard, handleDragEnd, handleDragOver, handleDragStart, toggleAddEditListModal, toggleAddEditModal, updateCardToList } from './board-action'
+import { addCardToList, addListToBoard, deleteListToBoard, handleDragEnd, handleDragOver, handleDragStart, toggleAddEditListModal, toggleAddEditModal, updateCardToList, updateListToBoard } from './board-action'
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable'
 import ActiveCardComponent from './components/ActiveCardComponent'
 import AddEditCardModal from './components/AddEditCardModal'
@@ -40,10 +40,6 @@ const BoardContainer = (props: Board) => {
             list)
     }
 
-    const renderLists = lists?.map((list) => (
-        <ListComponent key={list.listId} list={list} openModal={toggleModal} />
-    ))
-
     const sensors = useSensors(
         useSensor(MouseSensor),
         useSensor(PointerSensor),
@@ -60,9 +56,27 @@ const BoardContainer = (props: Board) => {
         updateCardToList(card, data, boardId, listId, cardId)
     }
 
-    const handleAddList = (list:List) => {
-        addListToBoard(data,boardId,list)
+    const handleAddList = (list: List) => {
+        addListToBoard(data, boardId, list)
     }
+
+    const handleUpdateList = (list: List) => {
+        updateListToBoard(data, boardId, list)
+    }
+
+    const handleDeleteList = (listId: string) => {
+        deleteListToBoard(data, boardId, listId)
+    }
+
+    const renderLists = lists?.map((list) => (
+        <ListComponent
+            key={list.listId}
+            list={list}
+            openModal={toggleModal}
+            toggleListModal={toggleListModal}
+            handleDeleteList={handleDeleteList}
+        />
+    ))
     return (
         <>
             <div className='flex-col p-4'>
@@ -70,8 +84,8 @@ const BoardContainer = (props: Board) => {
                     <div className='flex gap-1'>
                         <Typography.Text className='text-2xl text-center font-semibold'>{boardName}</Typography.Text>
                         <Button type='text'
-                            onClick={()=>{
-                                toggleListModal({actionType:"add",boardName,boardId})
+                            onClick={() => {
+                                toggleListModal({ actionType: "add", boardName, boardId })
                             }}>Create List</Button>
                     </div>
                 </Card>
@@ -108,6 +122,7 @@ const BoardContainer = (props: Board) => {
                 key={"addEditListModal"}
                 onClose={toggleListModal}
                 handleAddList={handleAddList}
+                handleUpdateList={handleUpdateList}
             />
         </>
     )

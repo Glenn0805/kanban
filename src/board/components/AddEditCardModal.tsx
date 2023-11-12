@@ -18,7 +18,7 @@ const AddEditCardModal = (props: Props) => {
     const { actionType, isAddEditModalOpen, listName, listId } = modal
     const { useForm, Item } = Form
     const [form] = useForm()
-    const renderTitle = actionType == "add" ? (<> Add Card in <span className='text-[#1677ff]'>{listName || ""} </span> List</>) : (<>Update</>)
+    const renderTitle = actionType == "add" ? (<> Add Card in <span className='text-[#1677ff]'>{listName?.toUpperCase() || ""} </span> List</>) : (<>Update</>)
 
     const priorityOptions = [
         {

@@ -8,14 +8,15 @@ type Props = {
     modal: AddEditListModalType,
     list: List,
     onClose: ToggleAddEditListModal,
-    handleAddList: (list: List) => void
+    handleAddList: (list: List) => void,
+    handleUpdateList:(list:List)=>void
 }
 const AddEditListModal = (props: Props) => {
-    const { modal, list, onClose,handleAddList } = props
+    const { modal, list, onClose,handleAddList,handleUpdateList } = props
     const { isAddEditModalOpen, actionType, boardId, boardName } = modal
     const { Item, useForm } = Form
     const [form] = useForm()
-    const renderModalHeader = actionType == "add" ? (<> Add List in <span className='text-[#1677ff]'>{boardName || ""} </span> Board</>) : (<>Update</>)
+    const renderModalHeader = actionType == "add" ? (<> Add List in <span className='text-[#1677ff]'>{boardName?.toUpperCase() || ""} </span> Board</>) : (<>Update</>)
 
     const handleSubmit = () => {
         form.validateFields().then(() => {
@@ -25,9 +26,9 @@ const AddEditListModal = (props: Props) => {
                 handleAddList(newList)
             }
 
-            // if (actionType === 'edit') {
-            //     updateCard(newCard, listId || "", card.id)
-            // }
+            if (actionType === 'edit') {
+                handleUpdateList(newList)
+            }
             form.resetFields()
             onClose({ actionType: null })
         }).catch(error => {
@@ -38,6 +39,7 @@ const AddEditListModal = (props: Props) => {
     const renderModalFooter = (
         <div>
             <Button onClick={() => {
+                 onClose({ actionType: null })
             }}>Cancel</Button>
             <Button className='bg-[#1677ff]' type='primary' onClick={handleSubmit} htmlType="submit">
                 {actionType === "add" ? "Create List" : "Update List"}

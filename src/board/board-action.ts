@@ -316,3 +316,56 @@ export const addListToBoard = ( boards: Board[], boardId: string, list: List) =>
     }, "addListToBoard")
 
 }
+
+export const updateListToBoard = ( boards: Board[], boardId: string, list: List) => {
+    const currentBoard: Board = boards.filter(board => board.boardId === boardId)[0]
+    if (!currentBoard) return
+    const currentList = currentBoard.lists
+    
+    currentList.forEach((listItem)=>{
+        if(listItem.listId === list.listId){
+            listItem.cards =list.cards
+            listItem.color=list.color
+            listItem.listName=list.listName
+        }
+    })
+
+    const newBoard: Board = {
+        boardId,
+        boardName: currentBoard.boardName,
+        lists: [
+            ...currentList,
+        ]
+    }
+
+
+    setStateAction({
+        data: [
+            ...boards.filter(board => board.boardId !== boardId),
+            newBoard
+        ]
+    }, "updateListToBoard")
+
+}
+
+export const deleteListToBoard = ( boards: Board[], boardId: string, listId: string) => {
+    const currentBoard: Board = boards.filter(board => board.boardId === boardId)[0]
+    if (!currentBoard) return
+    const currentList = currentBoard.lists.filter((list)=>list.listId!=listId)
+
+    const newBoard: Board = {
+        boardId,
+        boardName: currentBoard.boardName,
+        lists: [
+            ...currentList,
+        ]
+    }
+
+    setStateAction({
+        data: [
+            ...boards.filter(board => board.boardId !== boardId),
+            newBoard
+        ]
+    }, "deleteListToBoard")
+
+}
