@@ -1,4 +1,4 @@
-import { Button, Form, Input, Modal, Select, Space, Tag } from 'antd'
+import { Button, Form, Input, Modal, Select, Space, Tag, App } from 'antd'
 import { AddEditCardModalType, CardType, CardLabel } from 'src/shared/type/KanbanType'
 import { FcHighPriority, FcLowPriority, FcMediumPriority } from 'react-icons/fc'
 import { IoMdAdd } from 'react-icons/io'
@@ -8,17 +8,20 @@ import { v4 as uuidv4 } from 'uuid';
 import { UniqueIdentifier } from '@dnd-kit/core'
 type Props = {
     onClose: ToggleAddEditModal
-    modal: AddEditCardModalType,
+    addEditModal: AddEditCardModalType,
     card: CardType,
     addCard: (card: CardType, listId: string) => void,
     updateCard: (card: CardType, listId: string, cardId: UniqueIdentifier) => void,
+    handleDeleteCard: (listId: string, cardId: string) => void
 }
 const AddEditCardModal = (props: Props) => {
-    const { modal, onClose, card, addCard, updateCard } = props
-    const { actionType, isAddEditModalOpen, listName, listId } = modal
+    const { addEditModal, onClose, card, addCard, updateCard, handleDeleteCard } = props
+    const { actionType, isAddEditModalOpen, listName, listId } = addEditModal
     const { useForm, Item } = Form
     const [form] = useForm()
     const renderTitle = actionType == "add" ? (<> Add Card in <span className='text-[#1677ff]'>{listName?.toUpperCase() || ""} </span> List</>) : (<>Update</>)
+
+    const { modal, notification } = App.useApp()
 
     const priorityOptions = [
         {
@@ -129,20 +132,54 @@ const AddEditCardModal = (props: Props) => {
         }).catch(error => {
             console.log(error)
         })
+    }
 
+    const showNotif = () => {
+        notification.info({ message: "Card Deleted!", duration: 3, placement: "topLeft" })
+    }
 
+    const showConfirmation = () => {
+        modal.confirm({
+            title: "Delete Card",
+            content: "Are you sure to delete this Card ?",
+            onOk() {
+                if (listId) {
+                    handleDeleteCard(listId, card.id)
+                    showNotif()
+                    onClose({ actionType: null })
+                }
+            },
+            onCancel() {
+            },
+            okText: "Yes,Delete Card",
+            cancelText: "Cancel",
+            okButtonProps: { type: "primary", className: "bg-[#1677ff]" }
+        })
     }
 
     const renderModalFooter = (
-        <div>
-            <Button onClick={() => {
-                onClose({ actionType: null })
-                form.resetFields()
-            }}>Cancel</Button>
-            <Button className='bg-[#1677ff]' type='primary' onClick={handleSubmit} htmlType="submit">
-                {actionType === "add" ? "Create Card" : "Update Card"}
-            </Button>
+        <div className='flex justify-between'>
+            <div>
+                {
+                    actionType == "edit" && (
+                        <Button
+                            danger
+                            type='primary'
+                            onClick={showConfirmation}
+                        >Delete</Button>
+                    )}
+            </div>
+            <div>
+                <Button onClick={() => {
+                    onClose({ actionType: null })
+                    form.resetFields()
+                }}>Cancel</Button>
+                <Button className='bg-[#1677ff]' type='primary' onClick={handleSubmit} htmlType="submit">
+                    {actionType === "add" ? "Create Card" : "Update Card"}
+                </Button>
+            </div>
         </div>
+
     )
 
     return (

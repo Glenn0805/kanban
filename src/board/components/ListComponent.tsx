@@ -12,7 +12,7 @@ type Props = {
     list: List,
     openModal: ToggleAddEditModal,
     toggleListModal: ToggleAddEditListModal,
-    handleDeleteList: (listId: string) => void
+    handleDeleteList: (listId: string) => void,
 }
 
 const ListComponent = (props: Props) => {
@@ -38,25 +38,29 @@ const ListComponent = (props: Props) => {
 
                 <hr />
                 <Button
+                    type='text'
                     onClick={() => {
                         toggleListModal({ actionType: "edit", list })
                         toggleMoreOption(false)
-                    }}>Edit</Button>
+                    }}>Edit List</Button>
+                <Button
+                    type='text'
+                >Clear List</Button>
                 <Popconfirm
                     title="Delete List"
                     description="Are you sure to delete this List?"
-                    onConfirm={()=>{
-                          handleDeleteList(listId)
-                            toggleMoreOption(false)
+                    onConfirm={() => {
+                        handleDeleteList(listId)
+                        toggleMoreOption(false)
                     }}
-                    okButtonProps={{danger:true}}
+                    okButtonProps={{ danger: true }}
                     okText="Delete"
                     cancelText="No"
-                    >
+                >
 
                     <Button
                         type='primary'
-                        danger>Delete</Button>
+                        danger>Delete List</Button>
                 </Popconfirm>
             </div>
 

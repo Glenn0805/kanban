@@ -1,4 +1,4 @@
-import { ConfigProvider, Layout } from 'antd'
+import { App, ConfigProvider, Layout } from 'antd'
 import FooterComponent from './component/FooterComponent'
 import HeaderComponent from './component/HeaderComponent'
 import SideBarComponent from './component/SideBarComponent'
@@ -11,33 +11,35 @@ import themeConfig from './themeConfig'
 const LayoutContainer = () => {
     const { Content } = Layout
     const layoutState = useLayoutStore()
-    const isSideBarOpen =layoutState.isSideBarOpen
-    const themeColor=layoutState.themeColor
-    const appTheme =themeConfig[themeColor]
+    const isSideBarOpen = layoutState.isSideBarOpen
+    const themeColor = layoutState.themeColor
+    const appTheme = themeConfig[themeColor]
 
-    const toggleSideBarHandler = ()=>{
+    const toggleSideBarHandler = () => {
         toggleSideBar(isSideBarOpen)
     }
-    const toggleThemeHandler =()=>{
+    const toggleThemeHandler = () => {
         toggleTheme(themeColor)
     }
-    
+
     const boardStore = useBoardStore()
     const data = boardStore.data
 
     return (
         <>
             <ConfigProvider
-                theme={{...appTheme}}>
-                <Layout >
-                    <HeaderComponent toggleSideBar={toggleSideBarHandler} toggleTheme={toggleThemeHandler} theme={themeColor}/>
-                    <SideBarComponent isOpen={isSideBarOpen} toggleSideBar={toggleSideBarHandler} />
-                    <Content className='flex-col  h-screen'>
-                            <BoardContainer boardId={data[0]?.boardId || ""} boardName={data[0]?.boardName || ""} lists={data[0]?.lists || []}/>
-                        
-                    </Content>
-                    <FooterComponent />
-                </Layout>
+                theme={{ ...appTheme }}>
+                <App notification={{ placement: "topLeft" }}>
+                    <Layout >
+                        <HeaderComponent toggleSideBar={toggleSideBarHandler} toggleTheme={toggleThemeHandler} theme={themeColor} />
+                        <SideBarComponent isOpen={isSideBarOpen} toggleSideBar={toggleSideBarHandler} />
+                        <Content className='flex-col  h-screen'>
+                            <BoardContainer boardId={data[0]?.boardId || ""} boardName={data[0]?.boardName || ""} lists={data[0]?.lists || []} />
+
+                        </Content>
+                        <FooterComponent />
+                    </Layout>
+                </App>
             </ConfigProvider>
         </>
     )

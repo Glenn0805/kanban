@@ -267,6 +267,33 @@ export const updateCardToList = (card: CardType, boards: Board[], boardId: strin
 
 }
 
+export const deleteCardToList = ( boards: Board[], boardId: string, listId: string, cardId: UniqueIdentifier) => {
+    const currentBoard: Board = boards.filter(board => board.boardId === boardId)[0]
+    if (!currentBoard) return
+    const currentList = currentBoard.lists
+
+    const newList = currentList.map(list => {
+        if (list.listId == listId) {
+            const newCard = list.cards.filter(card=>card.id!=cardId)
+            list.cards = newCard
+        }
+        return list
+    })
+
+    const newBoard: Board = {
+        boardId,
+        boardName: currentBoard.boardName,
+        lists: [
+            ...newList,
+        ]
+    }
+    setStateAction({
+        data: [...boards.filter(board => board.boardId !== boardId),
+            newBoard]
+    }, "deleteCardToList")
+
+}
+
 export const toggleAddEditListModal = (addEditModal: AddEditListModalType, list?: List) => {
     const { isAddEditModalOpen, actionType = null, boardName, boardId } = addEditModal
     const obj: { modal: AddEditListModalType, list: List } = {

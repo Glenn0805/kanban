@@ -2,7 +2,7 @@ import { DndContext, DragOverlay, KeyboardSensor, UniqueIdentifier, closestCorne
 import { Board, CardType, List } from 'Shared/type/KanbanType'
 import ListComponent from './components/ListComponent'
 import useBoardStore from './board-store'
-import { addCardToList, addListToBoard, deleteListToBoard, handleDragEnd, handleDragOver, handleDragStart, toggleAddEditListModal, toggleAddEditModal, updateCardToList, updateListToBoard } from './board-action'
+import { addCardToList, addListToBoard, deleteCardToList, deleteListToBoard, handleDragEnd, handleDragOver, handleDragStart, toggleAddEditListModal, toggleAddEditModal, updateCardToList, updateListToBoard } from './board-action'
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable'
 import ActiveCardComponent from './components/ActiveCardComponent'
 import AddEditCardModal from './components/AddEditCardModal'
@@ -54,6 +54,10 @@ const BoardContainer = (props: Board) => {
 
     const handleUpdateCard = (card: CardType, listId: string, cardId: UniqueIdentifier) => {
         updateCardToList(card, data, boardId, listId, cardId)
+    }
+
+    const handleDeleteCard = (listId: string, cardId: UniqueIdentifier) => {
+        deleteCardToList(data, boardId, listId, cardId)
     }
 
     const handleAddList = (list: List) => {
@@ -111,10 +115,11 @@ const BoardContainer = (props: Board) => {
             <AddEditCardModal
                 addCard={handleAddCard}
                 updateCard={handleUpdateCard}
-                modal={addEditModal.modal}
+                addEditModal={addEditModal.modal}
                 card={addEditModal.card}
                 key={"addEditCardModal"}
                 onClose={toggleModal}
+                handleDeleteCard={handleDeleteCard}
             />
             <AddEditListModal
                 modal={addEditListModal.modal}
