@@ -396,3 +396,32 @@ export const deleteListToBoard = ( boards: Board[], boardId: string, listId: str
     }, "deleteListToBoard")
 
 }
+
+
+export const clearList = ( boards: Board[], boardId: string, listId: string) => {
+    const currentBoard: Board = boards.filter(board => board.boardId === boardId)[0]
+    if (!currentBoard) return
+    const currentList = currentBoard.lists
+
+    currentList.forEach((list)=>{
+        if(list.listId == listId){
+            list.cards=[]
+        }
+    })
+
+    const newBoard: Board = {
+        boardId,
+        boardName: currentBoard.boardName,
+        lists: [
+            ...currentList,
+        ]
+    }
+    // console.log(newBoard)
+    setStateAction({
+        data: [
+            ...boards.filter(board => board.boardId !== boardId),
+            newBoard
+        ]
+    }, "clearList")
+
+}

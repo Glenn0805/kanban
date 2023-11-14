@@ -1,4 +1,4 @@
-import { Button, Card, Popover, Popconfirm } from 'antd'
+import { Button, Card, Popover, Popconfirm, App } from 'antd'
 import CardComponent from './CardComponent'
 import { useDroppable } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
@@ -6,22 +6,45 @@ import { List } from 'Shared/type/KanbanType'
 import { VscAdd } from 'react-icons/vsc'
 import { ToggleAddEditListModal, ToggleAddEditModal } from '../type/BoardType'
 import { CgMoreAlt, CgClose } from 'react-icons/cg'
-import { useState } from 'react'
+import { ReactNode, useState } from 'react'
 
 type Props = {
     list: List,
     openModal: ToggleAddEditModal,
     toggleListModal: ToggleAddEditListModal,
     handleDeleteList: (listId: string) => void,
+    handleClearList: (listId: string) => void,
 }
 
 const ListComponent = (props: Props) => {
-    const { list, openModal, toggleListModal, handleDeleteList } = props
+    const { list, openModal, toggleListModal, handleDeleteList, handleClearList } = props
     const [isMoreOptionOpen, setIsMoreOptionOpen] = useState<boolean>(false)
     const { listName, listId, cards, color = "#1677ff", } = list
     const { setNodeRef } = useDroppable({
         id: listId
     })
+
+    const { notification, modal } = App.useApp()
+
+
+    const showNotif = (message: string) => {
+        notification.info({ message: message, duration: 3, placement: "topRight" })
+    }
+
+    const showConfirmation = (title: string, content: ReactNode, onOkFunc: VoidFunction) => {
+        modal.confirm({
+            title,
+            content,
+            onOk() {
+                onOkFunc()
+            },
+            onCancel() {
+            },
+            okText: "Yes",
+            cancelText: "Cancel",
+            okButtonProps: { type: "primary", className: "bg-[#1677ff]" }
+        })
+    }
 
     const toggleMoreOption = (newOpen: boolean) => {
         setIsMoreOptionOpen(newOpen)
@@ -45,23 +68,32 @@ const ListComponent = (props: Props) => {
                     }}>Edit List</Button>
                 <Button
                     type='text'
-                >Clear List</Button>
-                <Popconfirm
-                    title="Delete List"
-                    description="Are you sure to delete this List?"
-                    onConfirm={() => {
-                        handleDeleteList(listId)
+                    onClick={() => {
+                        showConfirmation(
+                            "Delete List",
+                            <>Are you sure to clear  <span className='text-[#1677ff] font-bold'>{listName?.toUpperCase() || ""}</span> list ?</>,
+                            () => {
+                                handleClearList(listId)
+                                showNotif("List Cleared!")
+                            }
+                        )
                         toggleMoreOption(false)
                     }}
-                    okButtonProps={{ danger: true }}
-                    okText="Delete"
-                    cancelText="No"
-                >
-
-                    <Button
-                        type='primary'
-                        danger>Delete List</Button>
-                </Popconfirm>
+                >Clear List</Button>
+                <Button
+                    type='primary'
+                    danger
+                    onClick={() => {
+                        showConfirmation(
+                            "Clear List",
+                            <>Are you sure to delete  <span className='text-[#1677ff] font-bold'>{listName?.toUpperCase() || ""}</span> list ?</>,
+                            () => {
+                                handleDeleteList(listId)
+                                showNotif("List Deleted!")
+                            }
+                        )
+                        toggleMoreOption(false)
+                    }}>Delete List</Button>
             </div>
 
         </>

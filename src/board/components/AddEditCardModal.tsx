@@ -135,7 +135,7 @@ const AddEditCardModal = (props: Props) => {
     }
 
     const showNotif = () => {
-        notification.info({ message: "Card Deleted!", duration: 3, placement: "topLeft" })
+        notification.info({ message: "Card Deleted!", duration: 3, placement: "topRight" })
     }
 
     const showConfirmation = () => {

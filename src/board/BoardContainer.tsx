@@ -2,7 +2,7 @@ import { DndContext, DragOverlay, KeyboardSensor, UniqueIdentifier, closestCorne
 import { Board, CardType, List } from 'Shared/type/KanbanType'
 import ListComponent from './components/ListComponent'
 import useBoardStore from './board-store'
-import { addCardToList, addListToBoard, deleteCardToList, deleteListToBoard, handleDragEnd, handleDragOver, handleDragStart, toggleAddEditListModal, toggleAddEditModal, updateCardToList, updateListToBoard } from './board-action'
+import { addCardToList, addListToBoard, clearList, deleteCardToList, deleteListToBoard, handleDragEnd, handleDragOver, handleDragStart, toggleAddEditListModal, toggleAddEditModal, updateCardToList, updateListToBoard } from './board-action'
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable'
 import ActiveCardComponent from './components/ActiveCardComponent'
 import AddEditCardModal from './components/AddEditCardModal'
@@ -72,6 +72,10 @@ const BoardContainer = (props: Board) => {
         deleteListToBoard(data, boardId, listId)
     }
 
+    const handleClearList = (listId: string) => {
+        clearList(data, boardId, listId)
+    }
+
     const renderLists = lists?.map((list) => (
         <ListComponent
             key={list.listId}
@@ -79,6 +83,7 @@ const BoardContainer = (props: Board) => {
             openModal={toggleModal}
             toggleListModal={toggleListModal}
             handleDeleteList={handleDeleteList}
+            handleClearList={handleClearList}
         />
     ))
     return (
