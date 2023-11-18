@@ -13,7 +13,7 @@ type Props = {
 }
 const AddEditListModal = (props: Props) => {
     const { modal, list, onClose,handleAddList,handleUpdateList } = props
-    const { isAddEditModalOpen, actionType, boardId, boardName } = modal
+    const { isAddEditModalOpen, actionType, boardName } = modal
     const { Item, useForm } = Form
     const [form] = useForm()
     const renderModalHeader = actionType == "add" ? (<> Add List in <span className='text-[#1677ff]'>{boardName?.toUpperCase() || ""} </span> Board</>) : (<>Update</>)
@@ -48,8 +48,8 @@ const AddEditListModal = (props: Props) => {
     )
 
     useEffect(() => {
-        if (!list.listId) {
-            list.listId = uuidv4()
+        if (!list.id) {
+            list.id = uuidv4()
         }
         form.setFieldsValue(list)
     }, [form, list])

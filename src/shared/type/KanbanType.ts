@@ -14,7 +14,7 @@ export type CardType = {
 }
 
 export type List = {
-    listId: string,
+    id: string,
     listName: string,
     color?:string,
     cards: CardType[] | [],

@@ -1,6 +1,5 @@
-import { Card, Badge, Tooltip, Popconfirm } from 'antd'
+import { Card, Badge, Tooltip } from 'antd'
 import { FiEdit2 } from 'react-icons/fi'
-import { MdDeleteOutline } from 'react-icons/md'
 import { CSS } from '@dnd-kit/utilities';
 import { useSortable } from '@dnd-kit/sortable';
 import { CardType, List } from 'src/shared/type/KanbanType';
@@ -14,7 +13,7 @@ type Props = {
 
 const CardComponent = (props: Props) => {
     const { card, openModal, list } = props
-    const { listId, listName } = list
+    const { id:listId, listName } = list
     const { cardName, id, cardLevel } = card
     const {
         attributes,
@@ -45,7 +44,7 @@ const CardComponent = (props: Props) => {
     }
 
     const openEditModal = () => {
-        openModal({ actionType: "edit", listName, listId, card })
+        openModal({ actionType: "edit", listName, id:listId, card })
     }
 
     return (

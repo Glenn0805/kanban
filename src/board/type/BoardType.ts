@@ -13,6 +13,6 @@ export type KanbanData = {
     }
 }
 
-export type ToggleAddEditModal = (params: { actionType: "add" | "edit" | null, listName?: string, listId?: string, card?: CardType }) => void
+export type ToggleAddEditModal = (params: { actionType: "add" | "edit" | null, listName?: string, id?: string, card?: CardType }) => void
 
 export type ToggleAddEditListModal = (params: { actionType: "add" | "edit" | null, boardName?: string, boardId?: string, list?: List }) => void

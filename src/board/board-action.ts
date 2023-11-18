@@ -13,7 +13,7 @@ const setStateAction = (payload, actionType: string) => {
 
 const findContainer = (listId: UniqueIdentifier | undefined, lists: List[] | undefined) => {
     if (!listId || !lists) return
-    if (lists.some(list => list.listId === listId)) {
+    if (lists.some(list => list.id === listId)) {
         return listId
     }
     let containerId: string = ""
@@ -21,7 +21,7 @@ const findContainer = (listId: UniqueIdentifier | undefined, lists: List[] | und
         const { cards } = list
         cards.forEach((card) => {
             if (card.id == listId) {
-                containerId = list.listId
+                containerId = list.id
                 return containerId
             }
         })
@@ -33,35 +33,43 @@ export const handleDragEnd = (event: DragEndEvent, lists: List[], boardId: strin
     const { active, over } = event;
     const overId = over?.id;
     const activeId = active.id
-
-    const activeContainer = findContainer(activeId, lists);
-    const overContainer = findContainer(overId, lists);
-
-    if (
-        !activeContainer ||
-        !overContainer ||
-        activeContainer !== overContainer
-    ) {
-        return;
-    }
-
-    const newListId: string = overContainer.toString() || activeContainer.toString()
-    const list: List = lists.filter(list => list.listId == newListId)[0]
-    const currentBoard: Board = boards.filter(board => board.boardId === boardId)[0]
-
-
     const oldIndex = active.data.current?.sortable.index
     const newIndex = over?.data.current?.sortable.index
+    const currentBoard: Board = boards.filter(board => board.boardId === boardId)[0]
 
-    const newCards = arrayMove(list.cards, oldIndex, newIndex);
-    const newList = lists.map((list) => {
-        if (list.listId === newListId) {
-            list.cards = newCards
+    if (lists.some(list => list.id === activeId)) {
+        console.log(activeId, oldIndex)
+        console.log(overId, newIndex)
+        const newListOrder = arrayMove(currentBoard?.lists, oldIndex, newIndex)
+        console.log("newListOrder", newListOrder)
+        currentBoard.lists = newListOrder
+    } else {
+        const activeContainer = findContainer(activeId, lists);
+        const overContainer = findContainer(overId, lists);
+
+        if (
+            !activeContainer ||
+            !overContainer ||
+            activeContainer !== overContainer
+        ) {
+            return;
         }
-        return list
-    })
-    currentBoard.lists = newList
 
+        const newListId: string = overContainer.toString() || activeContainer.toString()
+        const list: List = lists.filter(list => list.id == newListId)[0]
+
+
+
+
+        const newCards = arrayMove(list.cards, oldIndex, newIndex);
+        const newList = lists.map((list) => {
+            if (list.id === newListId) {
+                list.cards = newCards
+            }
+            return list
+        })
+        currentBoard.lists = newList
+    }
     if (active.id !== over?.id) {
 
         boardStore.setState((state) => (
@@ -88,8 +96,9 @@ export const handleDragEnd = (event: DragEndEvent, lists: List[], boardId: strin
 export const handleDragStart = (event: DragStartEvent, lists: List[]) => {
     const { active } = event;
     const { data, id } = active;
+    if (lists.some(list => list.id === id)) return
     const current = data.current
-    const currentList: List = lists.filter(list => list.listId === current?.sortable.containerId)[0]
+    const currentList: List = lists.filter(list => list.id === current?.sortable.containerId)[0]
     const cards: CardType[] = currentList.cards
     const activeCard = cards.filter((item) => item.id == id)[0]
 
@@ -102,12 +111,12 @@ export const handleDragOver = (event: DragOverEvent, lists: List[], boardId: str
     const activeId = active.id
     const activeContainer = findContainer(activeId, lists);
     const overContainer = findContainer(overId, lists);
-    if (!overContainer || !activeContainer || activeContainer === overContainer) {
+    if (!overContainer || !activeContainer || activeContainer === overContainer || lists.some(list => list.id === activeId)) {
         return;
     }
 
-    const activeItems = lists.filter(list => list.listId === activeContainer)
-    const overItems = lists.filter(list => list.listId === overContainer)
+    const activeItems = lists.filter(list => list.id === activeContainer)
+    const overItems = lists.filter(list => list.id === overContainer)
 
 
 
@@ -117,7 +126,7 @@ export const handleDragOver = (event: DragOverEvent, lists: List[], boardId: str
     const currentBoard = boards.filter(board => board.boardId === boardId)[0]
 
     let newIndex: number
-    if (lists.filter(list => list.listId === overContainer).length > 0) {
+    if (lists.filter(list => list.id === overContainer).length > 0) {
         newIndex = overItems.length + 1
     } else {
         const isBelowOverItem =
@@ -135,27 +144,27 @@ export const handleDragOver = (event: DragOverEvent, lists: List[], boardId: str
 
     lists.forEach((list) => {
         let newCards: CardType[] = []
-        if (list.listId !== activeContainer && list.listId !== overContainer) {
+        if (list.id !== activeContainer && list.id !== overContainer) {
             newList.push(list)
         }
-        if (list.listId === activeContainer) {
+        if (list.id === activeContainer) {
             newCards = activeItems[0].cards.filter(card => card.id != activeId)
             newList.push({
-                listId: list.listId,
+                id: list.id,
                 listName: list.listName,
                 color: list.color,
                 cards: newCards
             })
         }
 
-        if (list.listId === overContainer) {
+        if (list.id === overContainer) {
             newCards = [
                 ...overItems[0].cards.slice(0, newIndex),
                 activeItems[0].cards[activeItemIndex],
                 ...overItems[0].cards.slice(newIndex, overItems[0].cards.length)
             ]
             newList.push({
-                listId: list.listId,
+                id: list.id,
                 listName: list.listName,
                 color: list.color,
                 cards: newCards
@@ -210,7 +219,7 @@ export const addCardToList = (card: CardType, boards: Board[], boardId: string, 
     const currentList = currentBoard.lists
 
     const newList = currentList.map(list => {
-        if (list.listId == listId) {
+        if (list.id == listId) {
             list.cards.push(card)
         }
         return list
@@ -237,9 +246,9 @@ export const updateCardToList = (card: CardType, boards: Board[], boardId: strin
     const currentBoard: Board = boards.filter(board => board.boardId === boardId)[0]
     if (!currentBoard) return
     const currentList = currentBoard.lists
-
+    console.log(listId)
     const newList = currentList.map(list => {
-        if (list.listId == listId) {
+        if (list.id == listId) {
             const newCard = list.cards.map((cardInfo) => {
                 if (cardInfo.id == cardId) {
                     cardInfo = {
@@ -267,14 +276,14 @@ export const updateCardToList = (card: CardType, boards: Board[], boardId: strin
 
 }
 
-export const deleteCardToList = ( boards: Board[], boardId: string, listId: string, cardId: UniqueIdentifier) => {
+export const deleteCardToList = (boards: Board[], boardId: string, listId: string, cardId: UniqueIdentifier) => {
     const currentBoard: Board = boards.filter(board => board.boardId === boardId)[0]
     if (!currentBoard) return
     const currentList = currentBoard.lists
 
     const newList = currentList.map(list => {
-        if (list.listId == listId) {
-            const newCard = list.cards.filter(card=>card.id!=cardId)
+        if (list.id == listId) {
+            const newCard = list.cards.filter(card => card.id != cardId)
             list.cards = newCard
         }
         return list
@@ -304,9 +313,9 @@ export const toggleAddEditListModal = (addEditModal: AddEditListModalType, list?
             boardId
         },
         list: {
-            cards:[],
-            listId:"",
-            listName:""
+            cards: [],
+            id: "",
+            listName: ""
         }
     }
 
@@ -321,7 +330,7 @@ export const toggleAddEditListModal = (addEditModal: AddEditListModalType, list?
     }, "toggleAddEditListModal")
 }
 
-export const addListToBoard = ( boards: Board[], boardId: string, list: List) => {
+export const addListToBoard = (boards: Board[], boardId: string, list: List) => {
     const currentBoard: Board = boards.filter(board => board.boardId === boardId)[0]
     if (!currentBoard) return
     const currentList = currentBoard.lists
@@ -344,16 +353,16 @@ export const addListToBoard = ( boards: Board[], boardId: string, list: List) =>
 
 }
 
-export const updateListToBoard = ( boards: Board[], boardId: string, list: List) => {
+export const updateListToBoard = (boards: Board[], boardId: string, list: List) => {
     const currentBoard: Board = boards.filter(board => board.boardId === boardId)[0]
     if (!currentBoard) return
     const currentList = currentBoard.lists
-    
-    currentList.forEach((listItem)=>{
-        if(listItem.listId === list.listId){
-            listItem.cards =list.cards
-            listItem.color=list.color
-            listItem.listName=list.listName
+
+    currentList.forEach((listItem) => {
+        if (listItem.id === list.id) {
+            listItem.cards = list.cards
+            listItem.color = list.color
+            listItem.listName = list.listName
         }
     })
 
@@ -375,10 +384,10 @@ export const updateListToBoard = ( boards: Board[], boardId: string, list: List)
 
 }
 
-export const deleteListToBoard = ( boards: Board[], boardId: string, listId: string) => {
+export const deleteListToBoard = (boards: Board[], boardId: string, listId: string) => {
     const currentBoard: Board = boards.filter(board => board.boardId === boardId)[0]
     if (!currentBoard) return
-    const currentList = currentBoard.lists.filter((list)=>list.listId!=listId)
+    const currentList = currentBoard.lists.filter((list) => list.id != listId)
 
     const newBoard: Board = {
         boardId,
@@ -398,14 +407,14 @@ export const deleteListToBoard = ( boards: Board[], boardId: string, listId: str
 }
 
 
-export const clearList = ( boards: Board[], boardId: string, listId: string) => {
+export const clearList = (boards: Board[], boardId: string, listId: string) => {
     const currentBoard: Board = boards.filter(board => board.boardId === boardId)[0]
     if (!currentBoard) return
     const currentList = currentBoard.lists
 
-    currentList.forEach((list)=>{
-        if(list.listId == listId){
-            list.cards=[]
+    currentList.forEach((list) => {
+        if (list.id == listId) {
+            list.cards = []
         }
     })
 

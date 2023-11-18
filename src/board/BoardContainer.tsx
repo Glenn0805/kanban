@@ -10,7 +10,7 @@ import { MouseSensor, PointerSensor } from './config/CustomSensor'
 import { ToggleAddEditListModal, ToggleAddEditModal } from './type/BoardType'
 import { Button, Card, Typography } from 'antd'
 import AddEditListModal from './components/AddEditListModal'
-
+import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable'
 
 const BoardContainer = (props: Board) => {
     const { boardId, boardName, lists } = props
@@ -20,11 +20,11 @@ const BoardContainer = (props: Board) => {
     const addEditModal = boardStore.addEditModal
     const addEditListModal = boardStore.addEditListModal
 
-    const toggleModal: ToggleAddEditModal = ({ actionType, listName, listId, card }) => {
+    const toggleModal: ToggleAddEditModal = ({ actionType, listName, id, card }) => {
         toggleAddEditModal({
             isAddEditModalOpen: addEditModal.modal.isAddEditModalOpen,
             listName: listName,
-            listId: listId,
+            listId: id,
             actionType: actionType
         },
             card)
@@ -78,7 +78,7 @@ const BoardContainer = (props: Board) => {
 
     const renderLists = lists?.map((list) => (
         <ListComponent
-            key={list.listId}
+            key={list.id}
             list={list}
             openModal={toggleModal}
             toggleListModal={toggleListModal}
@@ -98,23 +98,29 @@ const BoardContainer = (props: Board) => {
                             }}>Create List</Button>
                     </div>
                 </Card>
-                <div className=' flex gap-4 flex-nowrap'>
-                    <DndContext
-                        sensors={sensors}
-                        collisionDetection={closestCorners}
-                        id={boardId}
-                        onDragStart={(event) => {
-                            handleDragStart(event, lists)
-                        }}
-                        onDragOver={(event) => {
-                            handleDragOver(event, lists, boardId, data)
-                        }}
-                        onDragEnd={(event) => {
-                            handleDragEnd(event, lists, boardId, data)
-                        }}>
-                        {renderLists}
-                        <DragOverlay>{activeCard?.id ? <ActiveCardComponent cardLevel={activeCard.cardLevel} cardName={activeCard.cardName} id={activeCard.id} /> : null}</DragOverlay>
-                    </DndContext>
+                <div className='overflow-x-scroll no-scrollbar'>
+                    <div className=' inline-grid grid-flow-col box-border gap-3'>
+                        <DndContext
+                            sensors={sensors}
+                            collisionDetection={closestCorners}
+                            id={boardId}
+                            onDragStart={(event) => {
+                                handleDragStart(event, lists)
+                            }}
+                            onDragOver={(event) => {
+                                handleDragOver(event, lists, boardId, data)
+                            }}
+                            onDragEnd={(event) => {
+                                handleDragEnd(event, lists, boardId, data)
+                            }}>
+                            <SortableContext
+                            items={lists || []}
+                            strategy={horizontalListSortingStrategy}>
+                            {renderLists}
+                            </SortableContext>
+                            <DragOverlay>{activeCard?.id ? <ActiveCardComponent cardLevel={activeCard.cardLevel} cardName={activeCard.cardName} id={activeCard.id} /> : null}</DragOverlay>
+                        </DndContext>
+                    </div>
                 </div>
             </div>
             <AddEditCardModal

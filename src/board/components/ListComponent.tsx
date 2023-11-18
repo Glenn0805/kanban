@@ -1,12 +1,15 @@
-import { Button, Card, Popover, Popconfirm, App } from 'antd'
+import { Button, Card, Popover, App } from 'antd'
 import CardComponent from './CardComponent'
 import { useDroppable } from '@dnd-kit/core'
+import { useSortable } from '@dnd-kit/sortable';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { List } from 'Shared/type/KanbanType'
 import { VscAdd } from 'react-icons/vsc'
 import { ToggleAddEditListModal, ToggleAddEditModal } from '../type/BoardType'
 import { CgMoreAlt, CgClose } from 'react-icons/cg'
 import { ReactNode, useState } from 'react'
+import { CSS } from '@dnd-kit/utilities';
+import { RiDragMove2Fill } from "react-icons/ri";
 
 type Props = {
     list: List,
@@ -19,10 +22,17 @@ type Props = {
 const ListComponent = (props: Props) => {
     const { list, openModal, toggleListModal, handleDeleteList, handleClearList } = props
     const [isMoreOptionOpen, setIsMoreOptionOpen] = useState<boolean>(false)
-    const { listName, listId, cards, color = "#1677ff", } = list
+    const { listName, id, cards, color = "#1677ff" } = list
     const { setNodeRef } = useDroppable({
-        id: listId
+        id
     })
+
+    const { setNodeRef: listSetNodeRef, attributes,
+        listeners,
+        transform,
+        transition, } = useSortable({
+            id: id
+        })
 
     const { notification, modal } = App.useApp()
 
@@ -73,7 +83,7 @@ const ListComponent = (props: Props) => {
                             "Delete List",
                             <>Are you sure to clear  <span className='text-[#1677ff] font-bold'>{listName?.toUpperCase() || ""}</span> list ?</>,
                             () => {
-                                handleClearList(listId)
+                                handleClearList(id)
                                 showNotif("List Cleared!")
                             }
                         )
@@ -88,7 +98,7 @@ const ListComponent = (props: Props) => {
                             "Clear List",
                             <>Are you sure to delete  <span className='text-[#1677ff] font-bold'>{listName?.toUpperCase() || ""}</span> list ?</>,
                             () => {
-                                handleDeleteList(listId)
+                                handleDeleteList(id)
                                 showNotif("List Deleted!")
                             }
                         )
@@ -98,64 +108,86 @@ const ListComponent = (props: Props) => {
 
         </>
     )
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+    };
     const renderMoreOption = (
-        <Popover
-            open={isMoreOptionOpen}
-            onOpenChange={toggleMoreOption}
-            trigger="click"
-            placement='right'
-            content={optionContent}>
-            <CgMoreAlt className="text-xl cursor-pointer" />
-        </Popover>
+        <>
+            <div className='flex gap-2'>
+                <Popover
+                    open={isMoreOptionOpen}
+                    onOpenChange={toggleMoreOption}
+                    trigger="click"
+                    placement='right'
+                    content={optionContent}>
+                    <CgMoreAlt className="text-xl cursor-pointer" />
+                </Popover>
+                <span
+                    ref={listSetNodeRef}
+                    style={style}
+                    {...listeners}
+                    {...attributes} >
+                    <RiDragMove2Fill />
+                </span>
+            </div>
+        </>
     )
+
 
 
     return (
         <>
-            <SortableContext items={cards || []} id={listId} strategy={verticalListSortingStrategy}>
-                <Card
-                    ref={setNodeRef}
-                    extra={renderMoreOption}
-                    bordered={false}
-                    title={listName.toUpperCase()}
-                    className='w-96 h-full max-h-[700px] border-t-8 p-0'
-                    style={{ borderTopColor: color }}
-                    headStyle={{ minHeight: "20px", padding: "8px" }}
-                    bodyStyle={
-                        {
-                            minHeight: '100px',
-                            padding: " 15px",
-                            paddingBottom: 0,
-                            overflow: "hidden",
-                            overflowY: "auto",
-                            maxHeight: "600px",
-                            display: "flex",
-                            flexDirection: 'column',
-                            gap: '12px',
+            <div
+                className='w-96 h-full max-h-[700px] p-0'>
+                <SortableContext
+                    items={cards || []}
+                    id={id}
+                    strategy={verticalListSortingStrategy}>
+                    <Card
+                        ref={setNodeRef}
+                        extra={renderMoreOption}
+                        bordered={false}
+                        title={listName.toUpperCase()}
+                        className='border-t-8'
+                        style={{ borderTopColor: color }}
+                        headStyle={{ minHeight: "20px", padding: "8px" }}
+                        bodyStyle={
+                            {
+                                minHeight: '100px',
+                                padding: " 15px",
+                                paddingBottom: 0,
+                                overflow: "hidden",
+                                overflowY: "auto",
+                                maxHeight: "600px",
+                                display: "flex",
+                                flexDirection: 'column',
+                                gap: '12px',
+                            }
                         }
-                    }
-                    actions={[
-                        <div className='px-3'>
-                            <Button
-                                type='text'
-                                className='flex w-full justify-center items-center'
-                                icon={<VscAdd className="text-base" />}
-                                onClick={() => {
-                                    openModal({ actionType: "add", listName, listId })
-                                }}
-                            > Add a Card
-                            </Button>
-                        </div>
-                    ]}
-                >
-                    {
-                        cards?.map((card) => <CardComponent list={list} key={card.id} card={card} openModal={openModal} />)
-                    }
+                        actions={[
+                            <div className='px-3'>
+                                <Button
+                                    type='text'
+                                    className='flex w-full justify-center items-center'
+                                    icon={<VscAdd className="text-base" />}
+                                    onClick={() => {
+                                        openModal({ actionType: "add", listName, id })
+                                    }}
+                                > Add a Card
+                                </Button>
+                            </div>
+                        ]}
+                    >
+                        {
+                            cards?.map((card) => <CardComponent list={list} key={card.id} card={card} openModal={openModal} />)
+                        }
 
-                </Card>
+                    </Card>
 
-            </SortableContext>
+                </SortableContext>
 
+            </div>
         </>
     )
 }
