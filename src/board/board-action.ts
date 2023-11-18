@@ -5,7 +5,7 @@ import { boardStore } from './board-store';
 import { KanbanData } from './type/BoardType';
 
 
-const setStateAction = (payload, actionType: string) => {
+const setStateAction = (payload: KanbanData | Partial<KanbanData>, actionType: string) => {
     boardStore.setState(() => ({
         ...payload
     }), false, actionType)
@@ -220,7 +220,7 @@ export const addCardToList = (card: CardType, boards: Board[], boardId: string, 
 
     const newList = currentList.map(list => {
         if (list.id == listId) {
-            list.cards.push(card)
+            list.cards= [...list.cards,card]
         }
         return list
     })

@@ -1,5 +1,3 @@
-import { create } from 'zustand';
-import useShallowHook from 'Shared/hooks/useShallowHook';
 import { persist,createJSONStorage } from 'zustand/middleware';
 import { createWithEqualityFn } from 'zustand/traditional';
 
