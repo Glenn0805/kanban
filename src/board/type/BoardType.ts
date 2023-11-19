@@ -3,6 +3,7 @@ import { AddEditCardModalType, AddEditListModalType, Board, CardType, List } fro
 export type KanbanData = {
     data: Board[] | [],
     activeCard: CardType | null,
+    activeList:List | null,
     addEditModal: {
         modal: AddEditCardModalType,
         card: CardType

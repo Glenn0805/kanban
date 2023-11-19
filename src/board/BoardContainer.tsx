@@ -11,12 +11,14 @@ import { ToggleAddEditListModal, ToggleAddEditModal } from './type/BoardType'
 import { Button, Card, Typography } from 'antd'
 import AddEditListModal from './components/AddEditListModal'
 import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable'
+import ActiveListComponent from './components/ActiveListComponent'
 
 const BoardContainer = (props: Board) => {
     const { boardId, boardName, lists } = props
     const boardStore = useBoardStore()
     const data = boardStore.data
     const activeCard = boardStore.activeCard
+    const activeList = boardStore.activeList
     const addEditModal = boardStore.addEditModal
     const addEditListModal = boardStore.addEditListModal
 
@@ -114,11 +116,37 @@ const BoardContainer = (props: Board) => {
                                 handleDragEnd(event, lists, boardId, data)
                             }}>
                             <SortableContext
-                            items={lists || []}
-                            strategy={horizontalListSortingStrategy}>
-                            {renderLists}
+                                items={lists || []}
+                                strategy={horizontalListSortingStrategy}>
+                                {renderLists}
                             </SortableContext>
-                            <DragOverlay>{activeCard?.id ? <ActiveCardComponent cardLevel={activeCard.cardLevel} cardName={activeCard.cardName} id={activeCard.id} /> : null}</DragOverlay>
+                            <DragOverlay>
+                                {
+                                    activeList?.id || activeCard?.id ?
+                                        activeList?.id ?
+                                            <ActiveListComponent
+                                                listName={activeList.listName}
+                                                cards={activeList.cards}
+                                                id={activeList.id}
+                                                color={activeList.color}
+                                            /> : <ActiveCardComponent
+                                                cardLevel={activeCard?.cardLevel || ""}
+                                                cardName={activeCard?.cardName || ""}
+                                                id={activeCard?.id || ""}
+                                            />
+                                        : null
+                                }
+                            </DragOverlay>
+                            {/* <DragOverlay>
+                                {
+                                    activeCard?.id ?
+                                        <ActiveCardComponent
+                                            cardLevel={activeCard.cardLevel}
+                                            cardName={activeCard.cardName}
+                                            id={activeCard.id}
+                                        /> : null
+                                }
+                            </DragOverlay> */}
                         </DndContext>
                     </div>
                 </div>

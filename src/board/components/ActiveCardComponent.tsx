@@ -19,7 +19,7 @@ const ActiveCardComponent = (props: CardType) => {
     }
     return (
         <>
-            <div className='rotate-6 cursor-grabbing opacity-75'>
+            <div className='rotate-6 cursor-grabbing'>
                 <Badge.Ribbon color={badgeInfo[props.cardLevel].color} text={badgeInfo[props.cardLevel].text} placement='start' className='abs text-[12px] max-h-[16px] flex justify-center text-center items-center'>
                     <Card className='group/card relative' extra={<div className="text-sm flex gap-2">
                         <FiEdit2 className="text-[#1677ff] invisible group-hover/card:visible hover:scale-105 transition ease-in-out delay-75" />

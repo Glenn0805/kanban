@@ -30,6 +30,7 @@ const ListComponent = (props: Props) => {
     const { setNodeRef: listSetNodeRef, attributes,
         listeners,
         transform,
+        isDragging,
         transition, } = useSortable({
             id: id
         })
@@ -111,6 +112,7 @@ const ListComponent = (props: Props) => {
     const style = {
         transform: CSS.Transform.toString(transform),
         transition,
+        opacity: isDragging ? .60 :1
     };
     const renderMoreOption = (
         <>
@@ -124,10 +126,8 @@ const ListComponent = (props: Props) => {
                     <CgMoreAlt className="text-xl cursor-pointer" />
                 </Popover>
                 <span
-                    ref={listSetNodeRef}
-                    style={style}
                     {...listeners}
-                    {...attributes} >
+                >
                     <RiDragMove2Fill />
                 </span>
             </div>
@@ -139,6 +139,9 @@ const ListComponent = (props: Props) => {
     return (
         <>
             <div
+                ref={listSetNodeRef}
+                {...attributes}
+                style={style}
                 className='w-96 h-full max-h-[700px] p-0'>
                 <SortableContext
                     items={cards || []}

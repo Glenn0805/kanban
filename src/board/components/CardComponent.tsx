@@ -21,11 +21,13 @@ const CardComponent = (props: Props) => {
         setNodeRef,
         transform,
         transition,
+        isDragging
     } = useSortable({ id });
 
     const style = {
         transform: CSS.Transform.toString(transform),
         transition,
+        opacity: isDragging ? .60 : 1
     };
 
     const badgeInfo: any = {

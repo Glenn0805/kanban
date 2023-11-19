@@ -38,10 +38,7 @@ export const handleDragEnd = (event: DragEndEvent, lists: List[], boardId: strin
     const currentBoard: Board = boards.filter(board => board.boardId === boardId)[0]
 
     if (lists.some(list => list.id === activeId)) {
-        console.log(activeId, oldIndex)
-        console.log(overId, newIndex)
         const newListOrder = arrayMove(currentBoard?.lists, oldIndex, newIndex)
-        console.log("newListOrder", newListOrder)
         currentBoard.lists = newListOrder
     } else {
         const activeContainer = findContainer(activeId, lists);
@@ -71,23 +68,13 @@ export const handleDragEnd = (event: DragEndEvent, lists: List[], boardId: strin
         currentBoard.lists = newList
     }
     if (active.id !== over?.id) {
-
-        boardStore.setState((state) => (
-            {
-                ...state,
-                data: [
-                    ...boards.filter(board => board.boardId !== boardId),
-                    currentBoard
-                ],
-                activeCard: null
-            }
-        ))
         setStateAction({
             data: [
                 ...boards.filter(board => board.boardId !== boardId),
                 currentBoard
             ],
-            activeCard: null
+            activeCard: null,
+            activeList:null
 
         }, "handleDragEnd")
     }
@@ -96,13 +83,19 @@ export const handleDragEnd = (event: DragEndEvent, lists: List[], boardId: strin
 export const handleDragStart = (event: DragStartEvent, lists: List[]) => {
     const { active } = event;
     const { data, id } = active;
-    if (lists.some(list => list.id === id)) return
     const current = data.current
-    const currentList: List = lists.filter(list => list.id === current?.sortable.containerId)[0]
-    const cards: CardType[] = currentList.cards
-    const activeCard = cards.filter((item) => item.id == id)[0]
-
-    setStateAction({ activeCard: activeCard }, "handleDragStart")
+    const currentList = lists.filter(list => list.id === current?.sortable.containerId || list.id === id)[0]
+    let activeCard:CardType | null = null;
+    let activeList: List | null = null;
+  
+    if (lists.some(list => list.id === id)) {
+        activeList = currentList
+    } else {
+        const cards: CardType[] = currentList.cards
+        activeCard = cards.filter((item) => item.id == id)[0]
+    }
+    console.log(activeList)
+    setStateAction({ activeCard: activeCard,activeList:activeList }, "handleDragStart")
 }
 
 export const handleDragOver = (event: DragOverEvent, lists: List[], boardId: string, boards: Board[]) => {
@@ -220,7 +213,7 @@ export const addCardToList = (card: CardType, boards: Board[], boardId: string, 
 
     const newList = currentList.map(list => {
         if (list.id == listId) {
-            list.cards= [...list.cards,card]
+            list.cards = [...list.cards, card]
         }
         return list
     })
