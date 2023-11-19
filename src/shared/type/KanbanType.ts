@@ -38,3 +38,8 @@ export type AddEditListModalType = {
     boardName?: string ,
     boardId?:string
 }
+
+export type AddEditBoardModalType = {
+    isAddEditModalOpen:boolean,
+    actionType?: "add" | "edit" | null,
+}

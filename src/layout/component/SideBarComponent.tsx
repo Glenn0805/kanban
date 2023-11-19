@@ -1,12 +1,14 @@
 import { Drawer } from 'antd'
 import BoardComponent from '../../board/components/BoardComponent'
+import { Board } from 'src/shared/type/KanbanType'
 
 type Props ={
     isOpen:boolean,
-    toggleSideBar: ()=>void
+    toggleSideBar: ()=>void,
+    data:Board[]
 }
 const SideBarComponent = (props:Props) => {
-    const {isOpen,toggleSideBar} = props
+    const {isOpen,toggleSideBar,data} = props
     return (
         <>
             <Drawer
@@ -16,24 +18,11 @@ const SideBarComponent = (props:Props) => {
                 open={isOpen}
                 onClose={toggleSideBar}
             >
-
-                <BoardComponent borderColor='red' />
-                <BoardComponent borderColor='red' />
-                <BoardComponent />
-                <BoardComponent />
-                <BoardComponent borderColor='red' />
-                <BoardComponent borderColor='green' />
-                <BoardComponent />
-                <BoardComponent borderColor='blue' />
-                <BoardComponent />
-                <BoardComponent />
-                <BoardComponent borderColor='red' />
-                <BoardComponent />
-                <BoardComponent />
-                <BoardComponent />
-                <BoardComponent />
-                <BoardComponent />
-
+                {
+                    data.map((board)=>
+                    <BoardComponent boardName={board.boardName} key={ board.boardId}/>
+                    )
+                }
 
             </Drawer>
         </>

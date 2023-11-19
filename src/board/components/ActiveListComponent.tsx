@@ -18,7 +18,7 @@ const ActiveListComponent = (props: List) => {
                 </Popover>
                 <span
                 >
-                    <RiDragMove2Fill />
+                    <RiDragMove2Fill className="cursor-grabbing" />
                 </span>
             </div>
         </>
@@ -26,7 +26,7 @@ const ActiveListComponent = (props: List) => {
     return (
         <>
             <div
-                className='w-96 h-full max-h-[700px] p-0 -rotate-6 cursor-grabbing'>
+                className='w-96 h-full max-h-[700px] p-0 rotate-6 cursor-grabbing'>
                 <Card
                     bordered={false}
                     title={listName.toUpperCase()}

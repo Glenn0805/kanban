@@ -1,4 +1,4 @@
-import { AddEditCardModalType, AddEditListModalType, Board, CardType, List } from 'Shared/type/KanbanType';
+import { AddEditBoardModalType, AddEditCardModalType, AddEditListModalType, Board, CardType, List } from 'Shared/type/KanbanType';
 import { DragEndEvent, DragOverEvent, DragStartEvent, UniqueIdentifier } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 import { boardStore } from './board-store';
@@ -426,4 +426,35 @@ export const clearList = (boards: Board[], boardId: string, listId: string) => {
         ]
     }, "clearList")
 
+}
+
+
+export const toggleAddEditBoardModal = (addEditModal: AddEditBoardModalType, board?: Board) => {
+    const { isAddEditModalOpen, actionType = null } = addEditModal
+    const obj: { modal: AddEditBoardModalType, board: Board } = {
+        modal: {
+            isAddEditModalOpen: !isAddEditModalOpen,
+            actionType: actionType,
+        },
+        board: {
+            lists: [],
+            boardId: "",
+            boardName: ""
+        }
+    }
+
+    if (actionType === "edit" && board) {
+        obj.board = { ...board }
+    }
+    setStateAction({
+        addEditBoardModal: {
+            ...obj
+        }
+    }, "toggleAddEditBoardModal")
+}
+
+export const addBoard = (newBoard:Board,boards:Board[]) =>{
+    setStateAction({
+        data:[...boards,newBoard]
+    },"addBoard")
 }
