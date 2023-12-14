@@ -40,6 +40,13 @@ export const handleDragEnd = (event: DragEndEvent, lists: List[], boardId: strin
     if (lists.some(list => list.id === activeId)) {
         const newListOrder = arrayMove(currentBoard?.lists, oldIndex, newIndex)
         currentBoard.lists = newListOrder
+        boards.forEach((board)=>{
+            if(board.boardId==boardId){
+                board.lists =[
+                    ...newListOrder
+                ]
+            }
+        })
     } else {
         const activeContainer = findContainer(activeId, lists);
         const overContainer = findContainer(overId, lists);
@@ -66,12 +73,19 @@ export const handleDragEnd = (event: DragEndEvent, lists: List[], boardId: strin
             return list
         })
         currentBoard.lists = newList
+        boards.forEach((board)=>{
+            if(board.boardId==boardId){
+                board.lists =[
+                    ...newList
+                ]
+            }
+        })
+        
     }
     if (active.id !== over?.id) {
         setStateAction({
             data: [
-                ...boards.filter(board => board.boardId !== boardId),
-                currentBoard
+                ...boards
             ],
             activeCard: null,
             activeList:null
@@ -171,10 +185,17 @@ export const handleDragOver = (event: DragOverEvent, lists: List[], boardId: str
         lists: newList
     }
 
+    boards.forEach((board)=>{
+        if(board.boardId==boardId){
+            board.lists =[
+                ...newList
+            ]
+        }
+    })
+
     setStateAction(
         {
-            data: [...boards.filter(board => board.boardId !== boardId),
-                newBoard]
+            data: [...boards]
         }, "handleDragOver"
     )
 }
@@ -225,11 +246,17 @@ export const addCardToList = (card: CardType, boards: Board[], boardId: string, 
             ...newList,
         ]
     }
+    boards.forEach((board)=>{
+        if(board.boardId==boardId){
+            board.lists =[
+                ...newList
+            ]
+        }
+    })
 
     setStateAction({
         data: [
-            ...boards.filter(board => board.boardId !== boardId),
-            newBoard
+            ...boards
         ]
     }, "addCardToList")
 
@@ -262,9 +289,17 @@ export const updateCardToList = (card: CardType, boards: Board[], boardId: strin
             ...newList,
         ]
     }
+
+    boards.forEach((board)=>{
+        if(board.boardId==boardId){
+            board.lists =[
+                ...newList
+            ]
+        }
+    })
+
     setStateAction({
-        data: [...boards.filter(board => board.boardId !== boardId),
-            newBoard]
+        data: [...boards]
     }, "updateCardToList")
 
 }
@@ -289,9 +324,16 @@ export const deleteCardToList = (boards: Board[], boardId: string, listId: strin
             ...newList,
         ]
     }
+
+    boards.forEach((board)=>{
+        if(board.boardId==boardId){
+            board.lists =[
+                ...newList
+            ]
+        }
+    })
     setStateAction({
-        data: [...boards.filter(board => board.boardId !== boardId),
-            newBoard]
+        data: [...boards]
     }, "deleteCardToList")
 
 }
@@ -337,10 +379,19 @@ export const addListToBoard = (boards: Board[], boardId: string, list: List) => 
         ]
     }
 
+    boards.forEach((board)=>{
+        if(board.boardId==boardId){
+            board.lists =[
+                ...currentList,
+                list
+            ]
+        }
+    })
+
     setStateAction({
-        data: [
-            ...boards.filter(board => board.boardId !== boardId),
-            newBoard
+        data: [...boards
+            // ...boards.filter(board => board.boardId !== boardId),
+            // newBoard
         ]
     }, "addListToBoard")
 
@@ -367,11 +418,18 @@ export const updateListToBoard = (boards: Board[], boardId: string, list: List) 
         ]
     }
 
+    boards.forEach((board)=>{
+        if(board.boardId==boardId){
+            board.lists =[
+                ...currentList,
+            ]
+        }
+    })
+
 
     setStateAction({
         data: [
-            ...boards.filter(board => board.boardId !== boardId),
-            newBoard
+            ...boards
         ]
     }, "updateListToBoard")
 
@@ -390,10 +448,18 @@ export const deleteListToBoard = (boards: Board[], boardId: string, listId: stri
         ]
     }
 
+    boards.forEach((board)=>{
+        if(board.boardId==boardId){
+            board.lists =[
+                ...currentList,
+            ]
+        }
+    })
+
+
     setStateAction({
         data: [
-            ...boards.filter(board => board.boardId !== boardId),
-            newBoard
+            ...boards
         ]
     }, "deleteListToBoard")
 
@@ -418,11 +484,21 @@ export const clearList = (boards: Board[], boardId: string, listId: string) => {
             ...currentList,
         ]
     }
+
+    boards.forEach((board)=>{
+        if(board.boardId==boardId){
+            board.lists =[
+                ...currentList,
+            ]
+        }
+    })
+
+
+    
     // console.log(newBoard)
     setStateAction({
         data: [
-            ...boards.filter(board => board.boardId !== boardId),
-            newBoard
+            ...boards
         ]
     }, "clearList")
 

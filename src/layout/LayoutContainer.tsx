@@ -58,7 +58,7 @@ const LayoutContainer = () => {
                         />
                         <SideBarComponent isOpen={isSideBarOpen} data={data} toggleSideBar={toggleSideBarHandler} />
                         <Content className='flex-col  h-screen'>
-                            <BoardContainer boardId={data[1]?.boardId || ""} boardName={data[1]?.boardName || ""} lists={data[1]?.lists || []} />
+                            <BoardContainer boardId={data[0]?.boardId || ""} boardName={data[0]?.boardName || ""} lists={data[0]?.lists || []} />
 
                         </Content>
                         <FooterComponent />
